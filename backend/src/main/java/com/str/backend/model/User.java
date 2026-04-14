@@ -1,6 +1,8 @@
 package com.str.backend.model;
 
 import jakarta.persistence.*;
+import java.util.Set;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "users")
@@ -13,6 +15,14 @@ public class User {
     private String name;
     private String email;
     private String password;
+    
+    @ManyToMany
+    @JoinTable(
+        name = "user_event",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
+    private Set<Event> events;
 
     public User() {}
 
