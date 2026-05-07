@@ -2,6 +2,8 @@ package com.str.backend.controller;
 
 import com.str.backend.model.*;
 import com.str.backend.repository.*;
+import com.str.backend.service.QrService;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -14,13 +16,16 @@ public class PurchaseController {
     private final PurchaseRepository purchaseRepository;
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
+    private final QrService qrService;
 
     public PurchaseController(PurchaseRepository purchaseRepository,
                               UserRepository userRepository,
-                              EventRepository eventRepository) {
+                              EventRepository eventRepository,
+                              QrService qrService) {
         this.purchaseRepository = purchaseRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
+        this.qrService = qrService;
     }
 
     @PostMapping
@@ -38,6 +43,7 @@ public class PurchaseController {
         purchase.setProductName(productName);
         purchase.setPrice(price);
         purchase.setDate(LocalDateTime.now());
+        purchase.setQrCode("purchase-" + System.currentTimeMillis());
 
         return purchaseRepository.save(purchase);
     }
@@ -45,5 +51,16 @@ public class PurchaseController {
     @GetMapping
     public List<Purchase> getAll() {
         return purchaseRepository.findAll();
+    }
+
+    @GetMapping("/qr")
+    public Purchase getByQr(@RequestParam String qrCode) {
+        return purchaseRepository.findByQrCode(qrCode);
+    }
+
+    @GetMapping(value = "/qr-image/{id}", produces = "image/png")
+    public byte[] getQrImage(@PathVariable Long id) throws Exception {
+        Purchase purchase = purchaseRepository.findById(id).orElseThrow();
+        return qrService.generateQr(purchase.getQrCode());
     }
 }

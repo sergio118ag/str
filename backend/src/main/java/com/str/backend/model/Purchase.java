@@ -16,6 +16,9 @@ public class Purchase {
 
     private LocalDateTime date;
 
+    @Column(unique = true)
+    private String qrCode;
+
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -51,5 +54,14 @@ public class Purchase {
     public void setUser(User user) { this.user = user; }
 
     public Event getEvent() { return event; }
-    public void setEvent(Event event) { this.event = event; }
+    public void setEvent(Event event) { 
+        this.event = event; }
+
+    public String getQrCode() {
+        return qrCode;
+    }
+
+    public void setQrCode(String qrCode) {
+        this.qrCode = qrCode;
+    }
 }
