@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       title: 'STR Eventos',
 
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.purple,
       ),
 
       home: const HomeScreen(),

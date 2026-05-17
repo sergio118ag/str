@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/event.dart';
 import '../services/api_service.dart';
+import 'event_detail_screen.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
@@ -134,7 +135,18 @@ class _EventsScreenState extends State<EventsScreen> {
                               width: double.infinity,
 
                               child: ElevatedButton(
-                                onPressed: () {},
+                                onPressed: () {
+
+                                    Navigator.push(
+
+                                        context,
+
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                EventDetailScreen(event: event),
+                                        ),
+                                    );
+                                },
 
                                 child: const Text("Ver evento"),
                               ),

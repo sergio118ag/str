@@ -1,68 +1,86 @@
 import 'package:flutter/material.dart';
-import '../models/purchase.dart';
-import '../services/api_service.dart';
 
-class HomeScreen extends StatefulWidget {
+import 'events_screen.dart';
+import 'purchases_screen.dart';
+
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
-
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-
-  late Future<List<Purchase>> purchases;
-
-  @override
-  void initState() {
-    super.initState();
-    purchases = ApiService().getPurchases();
-  }
 
   @override
   Widget build(BuildContext context) {
 
     return Scaffold(
+
       appBar: AppBar(
         title: const Text("STR Eventos"),
+        centerTitle: true,
       ),
 
-      body: FutureBuilder<List<Purchase>>(
+      body: Padding(
+        padding: const EdgeInsets.all(20),
 
-        future: purchases,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
 
-        builder: (context, snapshot) {
+          children: [
 
-          if (snapshot.connectionState ==
-              ConnectionState.waiting) {
+            SizedBox(
+              width: double.infinity,
+              height: 70,
 
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+              child: ElevatedButton.icon(
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
-          }
+                icon: const Icon(Icons.event),
 
-          final data = snapshot.data!;
+                label: const Text(
+                  "Ver eventos",
+                  style: TextStyle(fontSize: 20),
+                ),
 
-          return ListView.builder(
-            itemCount: data.length,
+                onPressed: () {
 
-            itemBuilder: (context, index) {
+                  Navigator.push(
+                    context,
 
-              final purchase = data[index];
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const EventsScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
 
-              return ListTile(
-                title: Text(purchase.productName),
-                subtitle: Text("${purchase.price} €"),
-              );
-            },
-          );
-        },
+            const SizedBox(height: 30),
+
+            SizedBox(
+              width: double.infinity,
+              height: 70,
+
+              child: ElevatedButton.icon(
+
+                icon: const Icon(Icons.shopping_cart),
+
+                label: const Text(
+                  "Mis compras",
+                  style: TextStyle(fontSize: 20),
+                ),
+
+                onPressed: () {
+
+                  Navigator.push(
+                    context,
+
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const PurchasesScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
