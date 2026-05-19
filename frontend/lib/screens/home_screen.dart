@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'events_screen.dart';
 import 'purchases_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       appBar: AppBar(
         title: const Text("STR Eventos"),
         centerTitle: true,
@@ -29,7 +28,6 @@ class HomeScreen extends StatelessWidget {
               height: 70,
 
               child: ElevatedButton.icon(
-
                 icon: const Icon(Icons.event),
 
                 label: const Text(
@@ -38,7 +36,6 @@ class HomeScreen extends StatelessWidget {
                 ),
 
                 onPressed: () {
-
                   Navigator.push(
                     context,
 
@@ -58,7 +55,6 @@ class HomeScreen extends StatelessWidget {
               height: 70,
 
               child: ElevatedButton.icon(
-
                 icon: const Icon(Icons.shopping_cart),
 
                 label: const Text(
@@ -67,13 +63,39 @@ class HomeScreen extends StatelessWidget {
                 ),
 
                 onPressed: () {
-
                   Navigator.push(
                     context,
 
                     MaterialPageRoute(
                       builder: (context) =>
                           const PurchasesScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            SizedBox(
+              width: double.infinity,
+              height: 70,
+
+              child: ElevatedButton.icon(
+                icon: const Icon(Icons.person),
+
+                label: const Text(
+                  "Mi perfil",
+                  style: TextStyle(fontSize: 20),
+                ),
+
+                onPressed: () {
+                  Navigator.push(
+                    context,
+
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const ProfileScreen(),
                     ),
                   );
                 },

@@ -14,6 +14,7 @@ public class User {
     private String name;
     private String email;
     private String password;
+    private Integer points = 0;
     
     @ManyToMany
     @JoinTable(
@@ -29,6 +30,7 @@ public class User {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.points = 0;
     }
 
     public Long getId() {
@@ -57,5 +59,21 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Integer getPoints() {
+        return points;
+    }
+
+    public void setPoints(Integer points) {
+        this.points = points;
+    }
+    
+    public Set<Event> getEvents() {
+    return events;
+    }
+
+    public void setEvents(Set<Event> events) {
+        this.events = events;
     }
 }

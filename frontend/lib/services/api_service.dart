@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/purchase.dart';
 import '../models/event.dart';
+import '../models/user.dart';
 
 class ApiService {
 
@@ -40,5 +41,20 @@ class ApiService {
     } else {
       throw Exception('Error al cargar eventos');
     }
+  }
+  Future<User> getUserById(int id) async {
+
+    final response = await http.get(
+      Uri.parse('$baseUrl/users/$id'),
+    );
+
+    if (response.statusCode == 200) {
+
+      return User.fromJson(
+        jsonDecode(response.body),
+      );
+    }
+
+    throw Exception('Error al cargar usuario');
   }
 }

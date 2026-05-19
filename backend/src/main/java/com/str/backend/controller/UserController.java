@@ -27,4 +27,37 @@ public class UserController {
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
+    
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userRepository.findById(id).orElseThrow();
+    }
+
+    @PostMapping("/{id}/add-points")
+    public User addPoints(@PathVariable Long id,
+                        @RequestParam Integer amount) {
+
+        User user = userRepository.findById(id).orElseThrow();
+
+        user.setPoints(user.getPoints() + amount);
+
+        return userRepository.save(user);
+    }
+
+    @PostMapping("/{id}/remove-points")
+    public User removePoints(@PathVariable Long id,
+                            @RequestParam Integer amount) {
+
+        User user = userRepository.findById(id).orElseThrow();
+
+        int newPoints = user.getPoints() - amount;
+
+        if (newPoints < 0) {
+            newPoints = 0;
+        }
+
+        user.setPoints(newPoints);
+
+        return userRepository.save(user);
+    }
 }
