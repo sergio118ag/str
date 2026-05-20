@@ -1,9 +1,12 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
+
 import '../models/purchase.dart';
 import '../models/event.dart';
 import '../models/user.dart';
 import '../models/reward.dart';
+import '../models/redeemed_reward.dart';
 
 class ApiService {
 
@@ -12,40 +15,61 @@ class ApiService {
   Future<List<Purchase>> getPurchases() async {
 
     final response =
-        await http.get(Uri.parse('$baseUrl/purchases'));
+        await http.get(
+      Uri.parse('$baseUrl/purchases'),
+    );
 
     if (response.statusCode == 200) {
 
-      List jsonData = json.decode(response.body);
+      List jsonData =
+          json.decode(response.body);
 
       return jsonData
-          .map((purchase) => Purchase.fromJson(purchase))
+          .map(
+            (purchase) =>
+                Purchase.fromJson(purchase),
+          )
           .toList();
 
     } else {
-      throw Exception('Error al cargar compras');
+
+      throw Exception(
+        'Error al cargar compras',
+      );
     }
   }
+
   Future<List<Event>> getEvents() async {
 
     final response =
-        await http.get(Uri.parse('$baseUrl/events'));
+        await http.get(
+      Uri.parse('$baseUrl/events'),
+    );
 
     if (response.statusCode == 200) {
 
-      List jsonData = json.decode(response.body);
+      List jsonData =
+          json.decode(response.body);
 
       return jsonData
-          .map((event) => Event.fromJson(event))
+          .map(
+            (event) =>
+                Event.fromJson(event),
+          )
           .toList();
 
     } else {
-      throw Exception('Error al cargar eventos');
+
+      throw Exception(
+        'Error al cargar eventos',
+      );
     }
   }
+
   Future<User> getUserById(int id) async {
 
-    final response = await http.get(
+    final response =
+        await http.get(
       Uri.parse('$baseUrl/users/$id'),
     );
 
@@ -56,11 +80,15 @@ class ApiService {
       );
     }
 
-    throw Exception('Error al cargar usuario');
+    throw Exception(
+      'Error al cargar usuario',
+    );
   }
+
   Future<List<Reward>> getRewards() async {
 
-    final response = await http.get(
+    final response =
+        await http.get(
       Uri.parse("$baseUrl/rewards"),
     );
 
@@ -70,19 +98,24 @@ class ApiService {
           jsonDecode(response.body);
 
       return data
-          .map((e) => Reward.fromJson(e))
+          .map(
+            (e) => Reward.fromJson(e),
+          )
           .toList();
     }
 
     throw Exception(
-        "Error al cargar recompensas");
+      "Error al cargar recompensas",
+    );
   }
+
   Future<void> removePoints(
-      int userId,
-      int amount,
+    int userId,
+    int amount,
   ) async {
 
-    final response = await http.post(
+    final response =
+        await http.post(
 
       Uri.parse(
         "$baseUrl/users/$userId/remove-points?amount=$amount",
@@ -95,5 +128,77 @@ class ApiService {
         "Error al quitar puntos",
       );
     }
+  }
+
+  Future<void> redeemReward(
+    int userId,
+    int rewardId,
+  ) async {
+
+    final response =
+        await http.post(
+
+      Uri.parse(
+        "$baseUrl/redeemed-rewards/redeem?userId=$userId&rewardId=$rewardId",
+      ),
+    );
+
+    if (response.statusCode != 200) {
+
+      throw Exception(
+        "Error al canjear recompensa",
+      );
+    }
+  }
+
+  Future<void> useReward(
+    int rewardId,
+  ) async {
+
+    final response =
+        await http.post(
+
+      Uri.parse(
+        "$baseUrl/redeemed-rewards/use/$rewardId",
+      ),
+    );
+
+    if (response.statusCode != 200) {
+
+      throw Exception(
+        "Error al usar recompensa",
+      );
+    }
+  }
+
+  Future<List<RedeemedReward>>
+      getRedeemedRewards(
+    int userId,
+  ) async {
+
+    final response =
+        await http.get(
+
+      Uri.parse(
+        "$baseUrl/redeemed-rewards/user/$userId",
+      ),
+    );
+
+    if (response.statusCode == 200) {
+
+      final List data =
+          jsonDecode(response.body);
+
+      return data
+          .map(
+            (e) =>
+                RedeemedReward.fromJson(e),
+          )
+          .toList();
+    }
+
+    throw Exception(
+      "Error al cargar recompensas canjeadas",
+    );
   }
 }

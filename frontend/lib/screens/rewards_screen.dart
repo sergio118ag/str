@@ -248,12 +248,10 @@ class _RewardsScreenState
                                       try {
 
                                         await ApiService()
-                                            .removePoints(
+                                            .redeemReward(
 
                                           currentUser!.id,
-
-                                          reward
-                                              .pointsRequired,
+                                          reward.id,
                                         );
 
                                         await loadUser();

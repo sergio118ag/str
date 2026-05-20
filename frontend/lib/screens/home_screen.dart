@@ -4,8 +4,10 @@ import 'events_screen.dart';
 import 'purchases_screen.dart';
 import 'profile_screen.dart';
 import 'rewards_screen.dart';
+import 'my_rewards_screen.dart';
 
 class HomeScreen extends StatelessWidget {
+
   const HomeScreen({super.key});
 
   @override
@@ -19,29 +21,39 @@ class HomeScreen extends StatelessWidget {
       ),
 
       body: Padding(
+
         padding: const EdgeInsets.all(20),
 
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+
+          mainAxisAlignment:
+              MainAxisAlignment.center,
 
           children: [
 
             SizedBox(
+
               width: double.infinity,
               height: 70,
 
               child: ElevatedButton.icon(
 
-                icon: const Icon(Icons.event),
+                icon: const Icon(
+                  Icons.event,
+                ),
 
                 label: const Text(
                   "Ver eventos",
-                  style: TextStyle(fontSize: 20),
+
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
                 ),
 
                 onPressed: () {
 
                   Navigator.push(
+
                     context,
 
                     MaterialPageRoute(
@@ -56,21 +68,28 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 30),
 
             SizedBox(
+
               width: double.infinity,
               height: 70,
 
               child: ElevatedButton.icon(
 
-                icon: const Icon(Icons.shopping_cart),
+                icon: const Icon(
+                  Icons.shopping_cart,
+                ),
 
                 label: const Text(
                   "Mis compras",
-                  style: TextStyle(fontSize: 20),
+
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
                 ),
 
                 onPressed: () {
 
                   Navigator.push(
+
                     context,
 
                     MaterialPageRoute(
@@ -85,21 +104,28 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 30),
 
             SizedBox(
+
               width: double.infinity,
               height: 70,
 
               child: ElevatedButton.icon(
 
-                icon: const Icon(Icons.person),
+                icon: const Icon(
+                  Icons.person,
+                ),
 
                 label: const Text(
                   "Mi perfil",
-                  style: TextStyle(fontSize: 20),
+
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
                 ),
 
                 onPressed: () {
 
                   Navigator.push(
+
                     context,
 
                     MaterialPageRoute(
@@ -114,26 +140,69 @@ class HomeScreen extends StatelessWidget {
             const SizedBox(height: 30),
 
             SizedBox(
+
               width: double.infinity,
               height: 70,
 
               child: ElevatedButton.icon(
 
-                icon: const Icon(Icons.card_giftcard),
+                icon: const Icon(
+                  Icons.card_giftcard,
+                ),
 
                 label: const Text(
                   "Recompensas",
-                  style: TextStyle(fontSize: 20),
+
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
                 ),
 
                 onPressed: () {
 
                   Navigator.push(
+
                     context,
 
                     MaterialPageRoute(
                       builder: (context) =>
                           const RewardsScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            SizedBox(
+
+              width: double.infinity,
+              height: 70,
+
+              child: ElevatedButton.icon(
+
+                icon: const Icon(
+                  Icons.redeem,
+                ),
+
+                label: const Text(
+                  "Mis recompensas",
+
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
+                ),
+
+                onPressed: () {
+
+                  Navigator.push(
+
+                    context,
+
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const MyRewardsScreen(),
                     ),
                   );
                 },
