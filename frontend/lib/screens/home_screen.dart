@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 
+import '../models/user.dart';
+
 import 'events_screen.dart';
 import 'purchases_screen.dart';
 import 'profile_screen.dart';
 import 'rewards_screen.dart';
 import 'my_rewards_screen.dart';
+import 'login_screen.dart';
 
 class HomeScreen extends StatelessWidget {
 
-  const HomeScreen({super.key});
+  final User user;
+
+  const HomeScreen({
+    super.key,
+    required this.user,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +24,35 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
 
       appBar: AppBar(
-        title: const Text("STR Eventos"),
+
+        title: const Text(
+          "STR Eventos",
+        ),
+
         centerTitle: true,
+
+        actions: [
+
+          IconButton(
+
+            onPressed: () {
+
+              Navigator.pushReplacement(
+
+                context,
+
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const LoginScreen(),
+                ),
+              );
+            },
+
+            icon: const Icon(
+              Icons.logout,
+            ),
+          ),
+        ],
       ),
 
       body: Padding(
@@ -30,6 +65,33 @@ class HomeScreen extends StatelessWidget {
               MainAxisAlignment.center,
 
           children: [
+
+            Text(
+
+              "Bienvenido ${user.name}",
+
+              style: const TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+
+            const SizedBox(height: 10),
+
+            const Text(
+
+              "Gestiona tus eventos, compras y recompensas",
+
+              textAlign: TextAlign.center,
+
+              style: TextStyle(
+                fontSize: 18,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+
+            const SizedBox(height: 40),
 
             SizedBox(
 
@@ -130,7 +192,9 @@ class HomeScreen extends StatelessWidget {
 
                     MaterialPageRoute(
                       builder: (context) =>
-                          const ProfileScreen(),
+                          ProfileScreen(
+                        user: user,
+                      ),
                     ),
                   );
                 },
@@ -166,7 +230,9 @@ class HomeScreen extends StatelessWidget {
 
                     MaterialPageRoute(
                       builder: (context) =>
-                          const RewardsScreen(),
+                          RewardsScreen(
+                        user: user,
+                      ),
                     ),
                   );
                 },
@@ -202,7 +268,9 @@ class HomeScreen extends StatelessWidget {
 
                     MaterialPageRoute(
                       builder: (context) =>
-                          const MyRewardsScreen(),
+                          MyRewardsScreen(
+                        user: user,
+                      ),
                     ),
                   );
                 },

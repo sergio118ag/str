@@ -3,10 +3,15 @@ import 'package:intl/intl.dart';
 
 import '../models/redeemed_reward.dart';
 import '../services/api_service.dart';
+import '../models/user.dart';
 
 class MyRewardsScreen extends StatefulWidget {
 
-  const MyRewardsScreen({super.key});
+  final User user;
+  const MyRewardsScreen({
+    super.key,
+    required this.user,
+  });
 
   @override
   State<MyRewardsScreen> createState() =>
@@ -29,8 +34,7 @@ class _MyRewardsScreenState
 
   void loadRewards() {
 
-    rewards = ApiService()
-        .getRedeemedRewards(1);
+    rewards = ApiService().getRedeemedRewards(widget.user.id);
   }
 
   String formatDate(String date) {

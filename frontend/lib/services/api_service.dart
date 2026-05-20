@@ -12,6 +12,42 @@ class ApiService {
 
   final String baseUrl = "http://localhost:8080";
 
+  Future<User> login(
+    String email,
+    String password,
+  ) async {
+
+    final response =
+        await http.post(
+
+      Uri.parse(
+        "$baseUrl/users/login",
+      ),
+
+      headers: {
+        "Content-Type":
+            "application/json",
+      },
+
+      body: jsonEncode({
+
+        "email": email,
+        "password": password,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+
+      return User.fromJson(
+        jsonDecode(response.body),
+      );
+    }
+
+    throw Exception(
+      "Email o contraseña incorrectos",
+    );
+  }
+
   Future<List<Purchase>> getPurchases() async {
 
     final response =

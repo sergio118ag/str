@@ -5,7 +5,12 @@ import '../models/user.dart';
 import '../services/api_service.dart';
 
 class RewardsScreen extends StatefulWidget {
-  const RewardsScreen({super.key});
+
+  final User user;
+  const RewardsScreen({
+    super.key,
+    required this.user,
+  });
 
   @override
   State<RewardsScreen> createState() =>
@@ -30,8 +35,7 @@ class _RewardsScreenState
 
   Future<void> loadUser() async {
 
-    final loadedUser =
-        await ApiService().getUserById(1);
+    final loadedUser = widget.user;
 
     setState(() {
       currentUser = loadedUser;

@@ -3,6 +3,7 @@ package com.str.backend.controller;
 import com.str.backend.model.User;
 import com.str.backend.repository.UserRepository;
 import org.springframework.web.bind.annotation.*;
+import com.str.backend.dto.LoginRequest;
 
 import java.util.List;
 
@@ -59,5 +60,26 @@ public class UserController {
         user.setPoints(newPoints);
 
         return userRepository.save(user);
+    }
+
+    @PostMapping("/login")
+    public User login(
+            @RequestBody LoginRequest request) {
+
+        User user = userRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(() ->
+                        new RuntimeException("Usuario no encontrado")
+                );
+
+        if (!user.getPassword().equals(
+                request.getPassword())) {
+
+            throw new RuntimeException(
+                    "Contraseña incorrecta"
+            );
+        }
+
+        return user;
     }
 }
