@@ -3,19 +3,21 @@ import 'package:flutter/material.dart';
 import '../models/user.dart';
 import '../services/api_service.dart';
 import 'home_screen.dart';
-import 'register_screen.dart';
 
-class LoginScreen extends StatefulWidget {
+class RegisterScreen extends StatefulWidget {
 
-  const LoginScreen({super.key});
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() =>
-      _LoginScreenState();
+  State<RegisterScreen> createState() =>
+      _RegisterScreenState();
 }
 
-class _LoginScreenState
-    extends State<LoginScreen> {
+class _RegisterScreenState
+    extends State<RegisterScreen> {
+
+  final nameController =
+      TextEditingController();
 
   final emailController =
       TextEditingController();
@@ -31,7 +33,7 @@ class _LoginScreenState
     return Scaffold(
 
       appBar: AppBar(
-        title: const Text("Iniciar sesión"),
+        title: const Text("Registro"),
       ),
 
       body: Padding(
@@ -45,21 +47,12 @@ class _LoginScreenState
 
           children: [
 
-            const Icon(
-              Icons.person,
-              size: 100,
-              color: Colors.purple,
-            ),
-
-            const SizedBox(height: 30),
-
             TextField(
 
-              controller: emailController,
+              controller: nameController,
 
               decoration: const InputDecoration(
-                labelText: "Email",
-                border: OutlineInputBorder(),
+                labelText: "Nombre",
               ),
             ),
 
@@ -67,14 +60,23 @@ class _LoginScreenState
 
             TextField(
 
-              controller:
-                  passwordController,
+              controller: emailController,
+
+              decoration: const InputDecoration(
+                labelText: "Email",
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            TextField(
+
+              controller: passwordController,
 
               obscureText: true,
 
               decoration: const InputDecoration(
                 labelText: "Contraseña",
-                border: OutlineInputBorder(),
               ),
             ),
 
@@ -83,7 +85,6 @@ class _LoginScreenState
             SizedBox(
 
               width: double.infinity,
-              height: 55,
 
               child: ElevatedButton(
 
@@ -99,8 +100,9 @@ class _LoginScreenState
 
                           User user =
                               await ApiService()
-                                  .login(
+                                  .register(
 
+                            nameController.text,
                             emailController.text,
                             passwordController.text,
                           );
@@ -110,9 +112,8 @@ class _LoginScreenState
                             context,
 
                             MaterialPageRoute(
-                              builder:
-                                  (context) =>
-                                      HomeScreen(
+                              builder: (_) =>
+                                  HomeScreen(
                                 user: user,
                               ),
                             ),
@@ -130,6 +131,7 @@ class _LoginScreenState
                               ),
                             ),
                           );
+
                         } finally {
 
                           setState(() {
@@ -143,33 +145,8 @@ class _LoginScreenState
                         color: Colors.white,
                       )
                     : const Text(
-                        "Iniciar sesión",
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
+                        "Registrarse",
                       ),
-              ),
-            ),
-
-            const SizedBox(height: 15),
-
-            TextButton(
-
-              onPressed: () {
-
-                Navigator.push(
-
-                  context,
-
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        const RegisterScreen(),
-                  ),
-                );
-              },
-
-              child: const Text(
-                "Registrarse",
               ),
             ),
           ],

@@ -48,6 +48,46 @@ class ApiService {
     );
   }
 
+  Future<User> register(
+    String name,
+    String email,
+    String password,
+  ) async {
+
+    final response =
+        await http.post(
+
+      Uri.parse(
+        "$baseUrl/users",
+      ),
+
+      headers: {
+        "Content-Type":
+            "application/json",
+      },
+
+      body: jsonEncode({
+
+        "name": name,
+        "email": email,
+        "password": password,
+        "points": 0,
+      }),
+    );
+
+    if (response.statusCode == 200 ||
+        response.statusCode == 201) {
+
+      return User.fromJson(
+        jsonDecode(response.body),
+      );
+    }
+
+    throw Exception(
+      "Error al registrar usuario",
+    );
+  }
+
   Future<List<Purchase>> getPurchases() async {
 
     final response =

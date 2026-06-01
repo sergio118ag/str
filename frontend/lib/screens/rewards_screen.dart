@@ -35,7 +35,9 @@ class _RewardsScreenState
 
   Future<void> loadUser() async {
 
-    final loadedUser = widget.user;
+    final loadedUser =
+        await ApiService()
+            .getUserById(widget.user.id);
 
     setState(() {
       currentUser = loadedUser;
