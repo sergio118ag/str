@@ -7,6 +7,7 @@ import '../models/event.dart';
 import '../models/user.dart';
 import '../models/reward.dart';
 import '../models/redeemed_reward.dart';
+import '../models/ticket.dart';
 
 class ApiService {
 
@@ -140,6 +141,35 @@ class ApiService {
         'Error al cargar eventos',
       );
     }
+  }
+
+  Future<List<Ticket>> getTicketsByEvent(
+    int eventId,
+  ) async {
+
+    final response =
+        await http.get(
+
+      Uri.parse(
+        "$baseUrl/tickets/event/$eventId",
+      ),
+    );
+
+    if (response.statusCode == 200) {
+
+      final List data =
+          jsonDecode(response.body);
+
+      return data
+          .map(
+            (e) => Ticket.fromJson(e),
+          )
+          .toList();
+    }
+
+    throw Exception(
+      "Error al cargar entradas",
+    );
   }
 
   Future<User> getUserById(int id) async {

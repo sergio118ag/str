@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../models/event.dart';
+import '../models/ticket.dart';
+import '../services/api_service.dart';
 
-class EventDetailScreen extends StatelessWidget {
+class EventDetailScreen extends StatefulWidget {
 
   final Event event;
 
@@ -12,12 +14,33 @@ class EventDetailScreen extends StatelessWidget {
   });
 
   @override
+  State<EventDetailScreen> createState() =>
+      _EventDetailScreenState();
+}
+
+class _EventDetailScreenState
+    extends State<EventDetailScreen> {
+
+  late Future<List<Ticket>> tickets;
+
+  @override
+  void initState() {
+
+    super.initState();
+
+    tickets = ApiService()
+        .getTicketsByEvent(
+      widget.event.id,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     return Scaffold(
 
       appBar: AppBar(
-        title: Text(event.name),
+        title: Text(widget.event.name),
       ),
 
       body: SingleChildScrollView(
@@ -36,16 +59,18 @@ class EventDetailScreen extends StatelessWidget {
             ),
 
             Padding(
+
               padding: const EdgeInsets.all(20),
 
               child: Column(
+
                 crossAxisAlignment:
                     CrossAxisAlignment.start,
 
                 children: [
 
                   Text(
-                    event.name,
+                    widget.event.name,
 
                     style: const TextStyle(
                       fontSize: 30,
@@ -56,7 +81,7 @@ class EventDetailScreen extends StatelessWidget {
                   const SizedBox(height: 20),
 
                   Text(
-                    event.description,
+                    widget.event.description,
 
                     style: const TextStyle(
                       fontSize: 18,
@@ -68,12 +93,14 @@ class EventDetailScreen extends StatelessWidget {
                   Row(
                     children: [
 
-                      const Icon(Icons.location_on),
+                      const Icon(
+                        Icons.location_on,
+                      ),
 
                       const SizedBox(width: 10),
 
                       Text(
-                        event.location,
+                        widget.event.location,
 
                         style: const TextStyle(
                           fontSize: 18,
@@ -84,19 +111,99 @@ class EventDetailScreen extends StatelessWidget {
 
                   const SizedBox(height: 40),
 
-                  SizedBox(
-                    width: double.infinity,
-                    height: 55,
+                  const Text(
+                    "Entradas disponibles",
 
-                    child: ElevatedButton(
-
-                      onPressed: () {},
-
-                      child: const Text(
-                        "Comprar entrada",
-                        style: TextStyle(fontSize: 20),
-                      ),
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight:
+                          FontWeight.bold,
                     ),
+                  ),
+
+                  const SizedBox(height: 20),
+
+                  FutureBuilder<List<Ticket>>(
+
+                    future: tickets,
+
+                    builder:
+                        (context, snapshot) {
+
+                      if (snapshot
+                              .connectionState ==
+                          ConnectionState
+                              .waiting) {
+
+                        return const Center(
+                          child:
+                              CircularProgressIndicator(),
+                        );
+                      }
+
+                      if (snapshot.hasError) {
+
+                        return Text(
+                          snapshot.error
+                              .toString(),
+                        );
+                      }
+
+                      final ticketList =
+                          snapshot.data!;
+
+                      return Column(
+
+                        children:
+                            ticketList.map(
+
+                          (ticket) {
+
+                            return Card(
+
+                              margin:
+                                  const EdgeInsets.only(
+                                bottom: 15,
+                              ),
+
+                              child: ListTile(
+
+                                title: Text(
+                                  ticket.name,
+                                ),
+
+                                subtitle: Text(
+                                  "${ticket.price} €",
+                                ),
+
+                                trailing:
+                                    ElevatedButton(
+
+                                  onPressed: () {
+
+                                    ScaffoldMessenger.of(
+                                            context)
+                                        .showSnackBar(
+
+                                      SnackBar(
+                                        content: Text(
+                                          "Comprar ${ticket.name}",
+                                        ),
+                                      ),
+                                    );
+                                  },
+
+                                  child:
+                                      const Text(
+                                    "Comprar",
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                        ).toList(),
+                      );
+                    },
                   ),
                 ],
               ),

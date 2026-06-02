@@ -14,16 +14,22 @@ public class Event {
     private String name;
     private String description;
     private String location;
+    private Double ticketPrice;
+    private Integer capacity;
+    private String eventDate;
 
     @ManyToMany(mappedBy = "events")
     private Set<User> users;
 
     public Event() {}
 
-    public Event(String name, String description, String location) {
+    public Event(String name, String description, String location, Double ticketPrice, Integer capacity, String eventDate) {
         this.name = name;
         this.description = description;
         this.location = location;
+        this.ticketPrice = ticketPrice;
+        this.capacity = capacity;
+        this.eventDate = eventDate;
     }
 
 
@@ -53,5 +59,29 @@ public class Event {
 
     public void setLocation(String location) {
         this.location = location;
+    }
+    
+    public Double getTicketPrice() {
+        return ticketPrice;
+    }
+
+    public void setTicketPrice(Double ticketPrice) {
+        this.ticketPrice = ticketPrice;
+    }
+
+    public Integer getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
+    }
+
+    public String getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(String eventDate) {
+        this.eventDate = eventDate;
     }
 }
