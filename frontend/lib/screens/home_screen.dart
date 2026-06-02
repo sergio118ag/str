@@ -8,6 +8,7 @@ import 'profile_screen.dart';
 import 'rewards_screen.dart';
 import 'my_rewards_screen.dart';
 import 'login_screen.dart';
+import '../services/session_service.dart';
 
 class HomeScreen extends StatelessWidget {
 
@@ -35,7 +36,9 @@ class HomeScreen extends StatelessWidget {
 
           IconButton(
 
-            onPressed: () {
+            onPressed: () async {
+
+              await SessionService().logout();
 
               Navigator.pushReplacement(
 

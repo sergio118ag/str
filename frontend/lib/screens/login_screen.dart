@@ -4,6 +4,7 @@ import '../models/user.dart';
 import '../services/api_service.dart';
 import 'home_screen.dart';
 import 'register_screen.dart';
+import '../services/session_service.dart';
 
 class LoginScreen extends StatefulWidget {
 
@@ -104,6 +105,7 @@ class _LoginScreenState
                             emailController.text,
                             passwordController.text,
                           );
+                          await SessionService().saveUserId(user.id);
 
                           Navigator.pushReplacement(
 

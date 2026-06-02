@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
 import 'screens/home_screen.dart';
 import 'models/user.dart';
+import 'screens/splash_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.purple,
       ),
 
-      home: const LoginScreen(),
+      home: const SplashScreen(),
       // home: HomeScreen(
       //   user: User(
       //     id: 1,
