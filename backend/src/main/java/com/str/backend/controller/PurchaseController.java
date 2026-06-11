@@ -9,7 +9,6 @@ import com.str.backend.repository.PurchaseRepository;
 import com.str.backend.repository.TicketRepository;
 import com.str.backend.repository.UserRepository;
 import com.str.backend.service.QrService;
-
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -65,23 +64,17 @@ public class PurchaseController {
             @RequestParam Long userId,
             @RequestParam Long ticketId) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow();
-
-        Ticket ticket = ticketRepository.findById(ticketId)
-                .orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow();
+        Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
 
         Purchase purchase = new Purchase();
-
         purchase.setUser(user);
         purchase.setEvent(ticket.getEvent());
         purchase.setTicket(ticket);
         purchase.setProductName(ticket.getName());
         purchase.setPrice(ticket.getPrice());
         purchase.setDate(LocalDateTime.now());
-        purchase.setQrCode(
-                "ticket-" + System.currentTimeMillis()
-        );
+        purchase.setQrCode("ticket-" + System.currentTimeMillis());
 
         return purchaseRepository.save(purchase);
     }
@@ -92,23 +85,13 @@ public class PurchaseController {
     }
 
     @GetMapping("/qr")
-    public Purchase getByQr(
-            @RequestParam String qrCode) {
-
+    public Purchase getByQr(@RequestParam String qrCode) {
         return purchaseRepository.findByQrCode(qrCode);
     }
 
-    @GetMapping(
-            value = "/qr-image/{id}",
-            produces = "image/png")
-    public byte[] getQrImage(
-            @PathVariable Long id) throws Exception {
-
-        Purchase purchase = purchaseRepository
-                .findById(id)
-                .orElseThrow();
-
-        return qrService.generateQr(
-                purchase.getQrCode());
+    @GetMapping(value = "/qr-image/{id}", produces = "image/png")
+    public byte[] getQrImage(@PathVariable Long id) throws Exception {
+        Purchase purchase = purchaseRepository.findById(id).orElseThrow();
+        return qrService.generateQr(purchase.getQrCode());
     }
 }
