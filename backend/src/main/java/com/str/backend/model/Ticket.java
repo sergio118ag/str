@@ -14,16 +14,18 @@ public class Ticket {
 
     private Double price;
 
+    private Integer available;
+
     @ManyToOne
     @JoinColumn(name = "event_id")
     private Event event;
 
-    public Ticket() {
-    }
+    public Ticket() {}
 
-    public Ticket(String name, Double price, Event event) {
+    public Ticket(String name, Double price, Integer available, Event event) {
         this.name = name;
         this.price = price;
+        this.available = available;
         this.event = event;
     }
 
@@ -45,6 +47,14 @@ public class Ticket {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public Integer getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Integer available) {
+        this.available = available;
     }
 
     public Event getEvent() {

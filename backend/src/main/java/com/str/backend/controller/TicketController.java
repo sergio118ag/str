@@ -28,15 +28,15 @@ public class TicketController {
     public Ticket createTicket(
             @RequestParam Long eventId,
             @RequestParam String name,
-            @RequestParam Double price) {
+            @RequestParam Double price,
+            @RequestParam Integer available) {
 
-        Event event = eventRepository
-                .findById(eventId)
-                .orElseThrow();
+        Event event = eventRepository.findById(eventId).orElseThrow();
 
         Ticket ticket = new Ticket();
         ticket.setName(name);
         ticket.setPrice(price);
+        ticket.setAvailable(available);
         ticket.setEvent(event);
 
         return ticketRepository.save(ticket);
@@ -48,9 +48,7 @@ public class TicketController {
     }
 
     @GetMapping("/event/{eventId}")
-    public List<Ticket> getTicketsByEvent(
-            @PathVariable Long eventId) {
-
+    public List<Ticket> getTicketsByEvent(@PathVariable Long eventId) {
         return ticketRepository.findByEventId(eventId);
     }
 }

@@ -12,13 +12,15 @@ public class Purchase {
     private Long id;
 
     private String productName;
+
     private Double price;
 
     private LocalDateTime date;
 
+    private Boolean used;
+
     @Column(unique = true)
     private String qrCode;
-
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -28,9 +30,19 @@ public class Purchase {
     @JoinColumn(name = "event_id")
     private Event event;
 
+    @ManyToOne
+    @JoinColumn(name = "ticket_id")
+    private Ticket ticket;
+
     public Purchase() {}
 
-    public Purchase(String productName, Double price, LocalDateTime date, User user, Event event) {
+    public Purchase(
+            String productName,
+            Double price,
+            LocalDateTime date,
+            User user,
+            Event event) {
+
         this.productName = productName;
         this.price = price;
         this.date = date;
@@ -38,24 +50,65 @@ public class Purchase {
         this.event = event;
     }
 
+    public Long getId() {
+        return id;
+    }
 
-    public Long getId() { return id; }
+    public String getProductName() {
+        return productName;
+    }
 
-    public String getProductName() { return productName; }
-    public void setProductName(String productName) { this.productName = productName; }
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
 
-    public Double getPrice() { return price; }
-    public void setPrice(Double price) { this.price = price; }
+    public Double getPrice() {
+        return price;
+    }
 
-    public LocalDateTime getDate() { return date; }
-    public void setDate(LocalDateTime date) { this.date = date; }
+    public void setPrice(Double price) {
+        this.price = price;
+    }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
+    public LocalDateTime getDate() {
+        return date;
+    }
 
-    public Event getEvent() { return event; }
-    public void setEvent(Event event) { 
-        this.event = event; }
+    public void setDate(LocalDateTime date) {
+        this.date = date;
+    }
+
+    public Boolean getUsed() {
+        return used;
+    }
+
+    public void setUsed(Boolean used) {
+        this.used = used;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Event getEvent() {
+        return event;
+    }
+
+    public void setEvent(Event event) {
+        this.event = event;
+    }
+
+    public Ticket getTicket() {
+        return ticket;
+    }
+
+    public void setTicket(Ticket ticket) {
+        this.ticket = ticket;
+    }
 
     public String getQrCode() {
         return qrCode;

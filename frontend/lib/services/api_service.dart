@@ -172,6 +172,28 @@ class ApiService {
     );
   }
 
+  Future<void> buyTicket(
+    int userId,
+    int ticketId,
+  ) async {
+
+    final response =
+        await http.post(
+
+      Uri.parse(
+        "$baseUrl/purchases/ticket?userId=$userId&ticketId=$ticketId",
+      ),
+    );
+
+    if (response.statusCode != 200 &&
+        response.statusCode != 201) {
+
+      throw Exception(
+        "Error al comprar entrada",
+      );
+    }
+  }
+
   Future<User> getUserById(int id) async {
 
     final response =
@@ -278,7 +300,7 @@ class ApiService {
   }
 
   Future<List<RedeemedReward>>
-      getRedeemedRewards(
+  getRedeemedRewards(
     int userId,
   ) async {
 
