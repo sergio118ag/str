@@ -17,6 +17,8 @@ public class Purchase {
 
     private LocalDateTime date;
 
+    private Boolean used;
+
     @Column(unique = true)
     private String qrCode;
 
@@ -74,6 +76,14 @@ public class Purchase {
 
     public void setDate(LocalDateTime date) {
         this.date = date;
+    }
+
+    public Boolean getUsed() {
+        return used;
+    }
+
+    public void setUsed(Boolean used) {
+        this.used = used;
     }
 
     public User getUser() {

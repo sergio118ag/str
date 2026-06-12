@@ -54,6 +54,7 @@ public class PurchaseController {
         purchase.setProductName(productName);
         purchase.setPrice(price);
         purchase.setDate(LocalDateTime.now());
+        purchase.setUsed(false);
         purchase.setQrCode("purchase-" + System.currentTimeMillis());
 
         return purchaseRepository.save(purchase);
@@ -81,6 +82,7 @@ public class PurchaseController {
         purchase.setProductName(ticket.getName());
         purchase.setPrice(ticket.getPrice());
         purchase.setDate(LocalDateTime.now());
+        purchase.setUsed(false);
         purchase.setQrCode("ticket-" + System.currentTimeMillis());
 
         return purchaseRepository.save(purchase);
