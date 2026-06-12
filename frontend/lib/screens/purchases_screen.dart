@@ -72,7 +72,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                           return Card(
                             child: ListTile(
                               title: Text(purchase.productName),
-                              subtitle: Text("${purchase.price} €"),
+                              subtitle: Text("${purchase.price.toStringAsFixed(2)} €"),
                               onTap: () {
                                 Navigator.push(
                                   context,
@@ -97,7 +97,7 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                           return Card(
                             child: ListTile(
                               title: Text(purchase.productName),
-                              subtitle: Text("${purchase.price} €"),
+                              subtitle: Text("${purchase.price.toStringAsFixed(2)} €"),
                               onTap: () {
                                 Navigator.push(
                                   context,
