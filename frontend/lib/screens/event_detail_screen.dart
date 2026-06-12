@@ -25,7 +25,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     tickets = ApiService().getTicketsByEvent(widget.event.id);
   }
 
-  Future<void> buyTicket(Ticket ticket) async {
+  Future buyTicket(Ticket ticket) async {
     final userId = await SessionService().getUserId();
 
     if (userId == null) {
@@ -33,6 +33,10 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     }
 
     await ApiService().buyTicket(userId, ticket.id);
+
+    setState(() {
+      tickets = ApiService().getTicketsByEvent(widget.event.id);
+    });
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text("Compra realizada: ${ticket.name}")),
@@ -59,19 +63,32 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.event.name,
-                      style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                  Text(
+                    widget.event.name,
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   Text(widget.event.description),
                   const SizedBox(height: 30),
-                  const Text("Entradas disponibles",
-                      style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Entradas disponibles",
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   const SizedBox(height: 10),
                   FutureBuilder<List<Ticket>>(
                     future: tickets,
                     builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
+                      if (snapshot.connectionState ==
+                          ConnectionState.waiting) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
                       }
 
                       if (snapshot.hasError) {
@@ -85,10 +102,18 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                           return Card(
                             child: ListTile(
                               title: Text(ticket.name),
-                              subtitle: Text("${ticket.price} €"),
+                              subtitle: Text(
+                                "${ticket.price} € - Disponibles: ${ticket.available}",
+                              ),
                               trailing: ElevatedButton(
-                                onPressed: () => buyTicket(ticket),
-                                child: const Text("Comprar"),
+                                onPressed: ticket.available > 0
+                                    ? () => buyTicket(ticket)
+                                    : null,
+                                child: Text(
+                                  ticket.available > 0
+                                      ? "Comprar"
+                                      : "Agotado",
+                                ),
                               ),
                             ),
                           );

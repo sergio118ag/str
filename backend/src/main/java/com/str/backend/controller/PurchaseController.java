@@ -67,6 +67,13 @@ public class PurchaseController {
         User user = userRepository.findById(userId).orElseThrow();
         Ticket ticket = ticketRepository.findById(ticketId).orElseThrow();
 
+        if (ticket.getAvailable() <= 0) {
+            throw new RuntimeException("No quedan entradas disponibles");
+        }
+
+        ticket.setAvailable(ticket.getAvailable() - 1);
+        ticketRepository.save(ticket);
+
         Purchase purchase = new Purchase();
         purchase.setUser(user);
         purchase.setEvent(ticket.getEvent());
