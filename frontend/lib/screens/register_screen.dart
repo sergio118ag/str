@@ -25,6 +25,21 @@ class _RegisterScreenState
   final passwordController =
       TextEditingController();
 
+  final addressController =
+      TextEditingController();
+
+  final postalCodeController =
+      TextEditingController();
+
+  final cityController =
+      TextEditingController();
+
+  final ageController =
+      TextEditingController();
+
+  final phoneController =
+      TextEditingController();
+
   bool loading = false;
 
   @override
@@ -40,116 +55,191 @@ class _RegisterScreenState
 
         padding: const EdgeInsets.all(20),
 
-        child: Column(
+        child: SingleChildScrollView(
 
-          mainAxisAlignment:
-              MainAxisAlignment.center,
+          child: Column(
 
-          children: [
+            mainAxisAlignment:
+                MainAxisAlignment.center,
 
-            TextField(
+            children: [
 
-              controller: nameController,
+              TextField(
 
-              decoration: const InputDecoration(
-                labelText: "Nombre",
+                controller: nameController,
+
+                decoration: const InputDecoration(
+                  labelText: "Nombre",
+                ),
               ),
-            ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            TextField(
+              TextField(
 
-              controller: emailController,
+                controller: emailController,
 
-              decoration: const InputDecoration(
-                labelText: "Email",
+                decoration: const InputDecoration(
+                  labelText: "Email",
+                ),
               ),
-            ),
 
-            const SizedBox(height: 20),
+              const SizedBox(height: 20),
 
-            TextField(
+              TextField(
 
-              controller: passwordController,
+                controller: passwordController,
 
-              obscureText: true,
+                obscureText: true,
 
-              decoration: const InputDecoration(
-                labelText: "Contraseña",
+                decoration: const InputDecoration(
+                  labelText: "Contraseña",
+                ),
               ),
-            ),
 
-            const SizedBox(height: 30),
+              const SizedBox(height: 20),
 
-            SizedBox(
+              TextField(
 
-              width: double.infinity,
+                controller: addressController,
 
-              child: ElevatedButton(
+                decoration: const InputDecoration(
+                  labelText: "Dirección",
+                ),
+              ),
 
-                onPressed: loading
-                    ? null
-                    : () async {
+              const SizedBox(height: 20),
 
-                        setState(() {
-                          loading = true;
-                        });
+              TextField(
 
-                        try {
+                controller: postalCodeController,
 
-                          User user =
-                              await ApiService()
-                                  .register(
+                decoration: const InputDecoration(
+                  labelText: "Código postal",
+                ),
+              ),
 
-                            nameController.text,
-                            emailController.text,
-                            passwordController.text,
-                          );
+              const SizedBox(height: 20),
 
-                          Navigator.pushReplacement(
+              TextField(
 
-                            context,
+                controller: cityController,
 
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  HomeScreen(
-                                user: user,
-                              ),
-                            ),
-                          );
+                decoration: const InputDecoration(
+                  labelText: "Ciudad",
+                ),
+              ),
 
-                        } catch (e) {
+              const SizedBox(height: 20),
 
-                          ScaffoldMessenger.of(
-                                  context)
-                              .showSnackBar(
+              TextField(
 
-                            SnackBar(
-                              content: Text(
-                                e.toString(),
-                              ),
-                            ),
-                          );
+                controller: ageController,
 
-                        } finally {
+                keyboardType:
+                    TextInputType.number,
+
+                decoration: const InputDecoration(
+                  labelText: "Edad",
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              TextField(
+
+                controller: phoneController,
+
+                keyboardType:
+                    TextInputType.phone,
+
+                decoration: const InputDecoration(
+                  labelText: "Teléfono",
+                ),
+              ),
+
+              const SizedBox(height: 30),
+
+              SizedBox(
+
+                width: double.infinity,
+
+                child: ElevatedButton(
+
+                  onPressed: loading
+                      ? null
+                      : () async {
 
                           setState(() {
-                            loading = false;
+                            loading = true;
                           });
-                        }
-                      },
 
-                child: loading
-                    ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
-                    : const Text(
-                        "Registrarse",
-                      ),
+                          try {
+
+                            User user =
+                                await ApiService()
+                                    .register(
+
+                              nameController.text,
+                              emailController.text,
+                              passwordController.text,
+
+                              addressController.text,
+                              postalCodeController.text,
+                              cityController.text,
+
+                              int.tryParse(
+                                    ageController.text,
+                                  ) ??
+                                  0,
+
+                              phoneController.text,
+                            );
+
+                            Navigator.pushReplacement(
+
+                              context,
+
+                              MaterialPageRoute(
+                                builder: (_) =>
+                                    HomeScreen(
+                                  user: user,
+                                ),
+                              ),
+                            );
+
+                          } catch (e) {
+
+                            ScaffoldMessenger.of(
+                                    context)
+                                .showSnackBar(
+
+                              SnackBar(
+                                content: Text(
+                                  e.toString(),
+                                ),
+                              ),
+                            );
+
+                          } finally {
+
+                            setState(() {
+                              loading = false;
+                            });
+                          }
+                        },
+
+                  child: loading
+                      ? const CircularProgressIndicator(
+                          color: Colors.white,
+                        )
+                      : const Text(
+                          "Registrarse",
+                        ),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
