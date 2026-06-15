@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../models/user.dart';
-
 import 'events_screen.dart';
 import 'purchases_screen.dart';
 import 'profile_screen.dart';
@@ -10,8 +9,7 @@ import 'my_rewards_screen.dart';
 import 'login_screen.dart';
 import '../services/session_service.dart';
 
-class HomeScreen extends StatelessWidget {
-
+class HomeScreen extends StatefulWidget {
   final User user;
 
   const HomeScreen({
@@ -20,259 +18,170 @@ class HomeScreen extends StatelessWidget {
   });
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late User currentUser;
+
+  @override
+  void initState() {
+    super.initState();
+    currentUser = widget.user;
+  }
+
+  @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-
       appBar: AppBar(
-
-        title: const Text(
-          "STR Eventos",
-        ),
-
+        title: const Text("STR Eventos"),
         centerTitle: true,
-
         actions: [
-
           IconButton(
-
             onPressed: () async {
-
               await SessionService().logout();
-
-              Navigator.pushReplacement(
-
-                context,
-
-                MaterialPageRoute(
-                  builder: (context) =>
-                      const LoginScreen(),
-                ),
-              );
+              
+              if (context.mounted) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LoginScreen(),
+                  ),
+                );
+              }
             },
-
-            icon: const Icon(
-              Icons.logout,
-            ),
+            icon: const Icon(Icons.logout),
           ),
         ],
       ),
-
       body: Padding(
-
         padding: const EdgeInsets.all(20),
-
         child: Column(
-
-          mainAxisAlignment:
-              MainAxisAlignment.center,
-
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
             Text(
-
-              "Bienvenido ${user.name}",
-
+              "Bienvenido ${currentUser.name}",
               style: const TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.bold,
               ),
             ),
-
             const SizedBox(height: 10),
-
             const Text(
-
               "Gestiona tus eventos, compras y recompensas",
-
               textAlign: TextAlign.center,
-
               style: TextStyle(
                 fontSize: 18,
                 color: Colors.grey,
                 fontWeight: FontWeight.w500,
               ),
             ),
-
             const SizedBox(height: 40),
-
             SizedBox(
-
               width: double.infinity,
               height: 70,
-
               child: ElevatedButton.icon(
-
-                icon: const Icon(
-                  Icons.event,
-                ),
-
+                icon: const Icon(Icons.event),
                 label: const Text(
                   "Ver eventos",
-
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
+                  style: TextStyle(fontSize: 20),
                 ),
-
                 onPressed: () {
-
                   Navigator.push(
-
                     context,
-
                     MaterialPageRoute(
-                      builder: (context) =>
-                          const EventsScreen(),
+                      builder: (context) => const EventsScreen(),
                     ),
                   );
                 },
               ),
             ),
-
             const SizedBox(height: 30),
-
             SizedBox(
-
               width: double.infinity,
               height: 70,
-
               child: ElevatedButton.icon(
-
-                icon: const Icon(
-                  Icons.shopping_cart,
-                ),
-
+                icon: const Icon(Icons.shopping_cart),
                 label: const Text(
                   "Mis compras",
-
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
+                  style: TextStyle(fontSize: 20),
                 ),
-
                 onPressed: () {
-
                   Navigator.push(
-
                     context,
-
                     MaterialPageRoute(
-                      builder: (context) =>
-                          const PurchasesScreen(),
+                      builder: (context) => const PurchasesScreen(),
                     ),
                   );
                 },
               ),
             ),
-
             const SizedBox(height: 30),
-
             SizedBox(
-
               width: double.infinity,
               height: 70,
-
               child: ElevatedButton.icon(
-
-                icon: const Icon(
-                  Icons.person,
-                ),
-
+                icon: const Icon(Icons.person),
                 label: const Text(
                   "Mi perfil",
-
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
+                  style: TextStyle(fontSize: 20),
                 ),
-
-                onPressed: () {
-
-                  Navigator.push(
-
+                onPressed: () async {
+                  final updatedUser = await Navigator.push<User>(
                     context,
-
                     MaterialPageRoute(
-                      builder: (context) =>
-                          ProfileScreen(
-                        user: user,
+                      builder: (context) => ProfileScreen(
+                        user: currentUser,
                       ),
                     ),
                   );
+                  
+                  if (updatedUser != null && mounted) {
+                    setState(() {
+                      currentUser = updatedUser;
+                    });
+                  }
                 },
               ),
             ),
-
             const SizedBox(height: 30),
-
             SizedBox(
-
               width: double.infinity,
               height: 70,
-
               child: ElevatedButton.icon(
-
-                icon: const Icon(
-                  Icons.card_giftcard,
-                ),
-
+                icon: const Icon(Icons.card_giftcard),
                 label: const Text(
                   "Recompensas",
-
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
+                  style: TextStyle(fontSize: 20),
                 ),
-
                 onPressed: () {
-
                   Navigator.push(
-
                     context,
-
                     MaterialPageRoute(
-                      builder: (context) =>
-                          RewardsScreen(
-                        user: user,
+                      builder: (context) => RewardsScreen(
+                        user: currentUser,
                       ),
                     ),
                   );
                 },
               ),
             ),
-
             const SizedBox(height: 30),
-
             SizedBox(
-
               width: double.infinity,
               height: 70,
-
               child: ElevatedButton.icon(
-
-                icon: const Icon(
-                  Icons.redeem,
-                ),
-
+                icon: const Icon(Icons.redeem),
                 label: const Text(
                   "Mis recompensas",
-
-                  style: TextStyle(
-                    fontSize: 20,
-                  ),
+                  style: TextStyle(fontSize: 20),
                 ),
-
                 onPressed: () {
-
                   Navigator.push(
-
                     context,
-
                     MaterialPageRoute(
-                      builder: (context) =>
-                          MyRewardsScreen(
-                        user: user,
+                      builder: (context) => MyRewardsScreen(
+                        user: currentUser,
                       ),
                     ),
                   );

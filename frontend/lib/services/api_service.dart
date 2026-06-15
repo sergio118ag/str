@@ -53,6 +53,11 @@ class ApiService {
     String name,
     String email,
     String password,
+    String address,
+    String postalCode,
+    String city,
+    int age,
+    String phone,
   ) async {
 
     final response =
@@ -73,6 +78,12 @@ class ApiService {
         "email": email,
         "password": password,
         "points": 0,
+
+        "address": address,
+        "postalCode": postalCode,
+        "city": city,
+        "age": age,
+        "phone": phone,
       }),
     );
 
@@ -327,6 +338,46 @@ class ApiService {
 
     throw Exception(
       "Error al cargar recompensas canjeadas",
+    );
+  }
+  Future<User> updateUser(
+  User user,
+  ) async {
+
+    final response =
+        await http.put(
+
+      Uri.parse(
+        "$baseUrl/users/${user.id}",
+      ),
+
+      headers: {
+        "Content-Type":
+            "application/json",
+      },
+
+      body: jsonEncode({
+
+        "name": user.name,
+        "email": user.email,
+
+        "address": user.address,
+        "postalCode": user.postalCode,
+        "city": user.city,
+        "age": user.age,
+        "phone": user.phone,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+
+      return User.fromJson(
+        jsonDecode(response.body),
+      );
+    }
+
+    throw Exception(
+      "Error al actualizar usuario",
     );
   }
 }
