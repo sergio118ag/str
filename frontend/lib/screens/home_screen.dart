@@ -160,6 +160,11 @@ class _HomeScreenState extends State<HomeScreen> {
                     MaterialPageRoute(
                       builder: (context) => RewardsScreen(
                         user: currentUser,
+                        onPointsUpdated: (User userActualizado) {
+                          setState(() {
+                            currentUser = userActualizado;
+                          });
+                        },
                       ),
                     ),
                   );

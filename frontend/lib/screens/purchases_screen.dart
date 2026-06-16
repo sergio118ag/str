@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/purchase.dart';
 import '../services/api_service.dart';
+import '../services/session_service.dart';
 import 'purchase_detail_screen.dart';
 
 class PurchasesScreen extends StatefulWidget {
@@ -16,7 +17,17 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
   @override
   void initState() {
     super.initState();
-    purchases = ApiService().getPurchases();
+    loadPurchases();
+  }
+
+  Future<void> loadPurchases() async {
+    final userId = await SessionService().getUserId();
+    if (userId != null) {
+      purchases = ApiService().getPurchasesByUser(userId);
+    } else {
+      purchases = Future.value([]);
+    }
+    setState(() {});
   }
 
   @override
@@ -38,7 +49,6 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
             return Center(child: Text(snapshot.error.toString()));
           }
 
-          // ✅ AQUÍ ESTÁ EL CAMBIO IMPORTANTE
           final data = snapshot.data ?? [];
 
           final tickets =
@@ -63,55 +73,59 @@ class _PurchasesScreenState extends State<PurchasesScreen> {
                   child: TabBarView(
                     children: [
 
-                      // 🎟 ENTRADAS
-                      ListView.builder(
-                        itemCount: tickets.length,
-                        itemBuilder: (context, index) {
-                          final purchase = tickets[index];
+                      // Entradas
+                      tickets.isEmpty
+                          ? const Center(child: Text("No has comprado entradas"))
+                          : ListView.builder(
+                            itemCount: tickets.length,
+                            itemBuilder: (context, index) {
+                              final purchase = tickets[index];
 
-                          return Card(
-                            child: ListTile(
-                              title: Text(purchase.productName),
-                              subtitle: Text("${purchase.price.toStringAsFixed(2)} €"),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => PurchaseDetailScreen(
-                                      purchase: purchase,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      ),
+                              return Card(
+                                child: ListTile(
+                                  title: Text(purchase.productName),
+                                  subtitle: Text("${purchase.price.toStringAsFixed(2)} €"),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => PurchaseDetailScreen(
+                                          purchase: purchase,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
 
-                      // 🛒 PRODUCTOS
-                      ListView.builder(
-                        itemCount: products.length,
-                        itemBuilder: (context, index) {
-                          final purchase = products[index];
+                      // Productos
+                      products.isEmpty
+                          ? const Center(child: Text("No has comprado productos"))
+                          : ListView.builder(
+                            itemCount: products.length,
+                            itemBuilder: (context, index) {
+                              final purchase = products[index];
 
-                          return Card(
-                            child: ListTile(
-                              title: Text(purchase.productName),
-                              subtitle: Text("${purchase.price.toStringAsFixed(2)} €"),
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => PurchaseDetailScreen(
-                                      purchase: purchase,
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          );
-                        },
-                      ),
+                              return Card(
+                                child: ListTile(
+                                  title: Text(purchase.productName),
+                                  subtitle: Text("${purchase.price.toStringAsFixed(2)} €"),
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => PurchaseDetailScreen(
+                                          purchase: purchase,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
                     ],
                   ),
                 ),

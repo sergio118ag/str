@@ -7,9 +7,12 @@ import '../services/api_service.dart';
 class RewardsScreen extends StatefulWidget {
 
   final User user;
+  final Function(User) onPointsUpdated;
+  
   const RewardsScreen({
     super.key,
     required this.user,
+    required this.onPointsUpdated,
   });
 
   @override
@@ -227,64 +230,48 @@ class _RewardsScreenState
 
                                     onPressed: () async {
 
-                                      if (currentUser ==
-                                          null) {
+                                      if (currentUser == null) {
                                         return;
                                       }
 
-                                      if (currentUser!
-                                              .points <
-                                          reward
-                                              .pointsRequired) {
-
-                                        ScaffoldMessenger.of(
-                                                context)
-                                            .showSnackBar(
-
+                                      if (currentUser!.points < reward.pointsRequired) {
+                                        ScaffoldMessenger.of(context).showSnackBar(
                                           const SnackBar(
-                                            content: Text(
-                                              "No tienes suficientes puntos",
-                                            ),
+                                            content: Text("No tienes suficientes puntos"),
                                           ),
                                         );
-
                                         return;
                                       }
 
                                       try {
-
-                                        await ApiService()
-                                            .redeemReward(
-
+                                        final updatedUser = await ApiService().redeemRewardAndGetUser(
                                           currentUser!.id,
                                           reward.id,
                                         );
 
-                                        await loadUser();
-
-                                        ScaffoldMessenger.of(
-                                                context)
-                                            .showSnackBar(
-
-                                          SnackBar(
-                                            content: Text(
-                                              "Has canjeado ${reward.name}",
+                                        if (mounted) {
+                                          setState(() {
+                                            currentUser = updatedUser;
+                                          });
+                                          
+                                          widget.onPointsUpdated(updatedUser);
+                                          
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text("Has canjeado ${reward.name}"),
+                                              backgroundColor: Colors.green,
                                             ),
-                                          ),
-                                        );
-
+                                          );
+                                        }
                                       } catch (e) {
-
-                                        ScaffoldMessenger.of(
-                                                context)
-                                            .showSnackBar(
-
-                                          SnackBar(
-                                            content: Text(
-                                              e.toString(),
+                                        if (mounted) {
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Text(e.toString()),
+                                              backgroundColor: Colors.red,
                                             ),
-                                          ),
-                                        );
+                                          );
+                                        }
                                       }
                                     },
 
