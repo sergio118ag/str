@@ -1,5 +1,15 @@
 package com.str.backend.controller;
 
+import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.str.backend.model.Event;
 import com.str.backend.model.Purchase;
 import com.str.backend.model.Ticket;
@@ -9,10 +19,6 @@ import com.str.backend.repository.PurchaseRepository;
 import com.str.backend.repository.TicketRepository;
 import com.str.backend.repository.UserRepository;
 import com.str.backend.service.QrService;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.util.List;
 
 @RestController
 @RequestMapping("/purchases")
@@ -91,6 +97,11 @@ public class PurchaseController {
     @GetMapping
     public List<Purchase> getAll() {
         return purchaseRepository.findAll();
+    }
+
+    @GetMapping("/user/{userId}")
+    public List<Purchase> getPurchasesByUser(@PathVariable Long userId) {
+        return purchaseRepository.findByUser_Id(userId);
     }
 
     @GetMapping("/qr")
