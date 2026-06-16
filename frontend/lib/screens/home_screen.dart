@@ -7,6 +7,7 @@ import 'profile_screen.dart';
 import 'rewards_screen.dart';
 import 'my_rewards_screen.dart';
 import 'login_screen.dart';
+import 'role_selection_screen.dart';
 import '../services/session_service.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -45,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const LoginScreen(),
+                    builder: (context) => const RoleSelectionScreen(),
                   ),
                 );
               }

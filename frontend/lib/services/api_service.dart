@@ -148,6 +148,81 @@ class ApiService {
     }
   }
 
+  Future<List<Event>> getEventsByOrganizer(int organizerId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/events/organizer/$organizerId'),
+    );
+
+    if (response.statusCode == 200) {
+      List jsonData = json.decode(response.body);
+      return jsonData.map((event) => Event.fromJson(event)).toList();
+    } else {
+      throw Exception('Error al cargar eventos del organizador');
+    }
+  }
+
+  Future<Event> getEventById(int eventId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/events/$eventId'),
+    );
+
+    if (response.statusCode == 200) {
+      return Event.fromJson(jsonDecode(response.body));
+    }
+
+    throw Exception('Error al cargar evento');
+  }
+
+  Future<Event> createEvent(Map<String, dynamic> eventData, int organizerId) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/events?organizerId=$organizerId'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(eventData),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Event.fromJson(jsonDecode(response.body));
+    }
+
+    throw Exception('Error al crear evento');
+  }
+
+  Future<Event> updateEvent(int eventId, Event event) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/events/$eventId'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(event.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      return Event.fromJson(jsonDecode(response.body));
+    }
+
+    throw Exception('Error al actualizar evento');
+  }
+
+  Future<void> deleteEvent(int eventId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/events/$eventId'),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al eliminar evento');
+    }
+  }
+
+  Future<Event> updateEventCapacity(int eventId, int newCapacity) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/events/$eventId/capacity?newCapacity=$newCapacity'),
+    );
+
+    if (response.statusCode == 200) {
+      return Event.fromJson(jsonDecode(response.body));
+    }
+
+    throw Exception('Error al actualizar aforo');
+  }
+
   Future<List<Ticket>> getTicketsByEvent(
     int eventId,
   ) async {

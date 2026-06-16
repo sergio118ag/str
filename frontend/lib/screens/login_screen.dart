@@ -4,26 +4,24 @@ import '../models/user.dart';
 import '../services/api_service.dart';
 import 'home_screen.dart';
 import 'register_screen.dart';
+import 'event_management_screen.dart';
+import 'admin_screen.dart';
+import 'role_selection_screen.dart';
 import '../services/session_service.dart';
 
 class LoginScreen extends StatefulWidget {
+  final String role;
 
-  const LoginScreen({super.key});
+  const LoginScreen({super.key, required this.role});
 
   @override
-  State<LoginScreen> createState() =>
-      _LoginScreenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState
-    extends State<LoginScreen> {
+class _LoginScreenState extends State<LoginScreen> {
 
-  final emailController =
-      TextEditingController();
-
-  final passwordController =
-      TextEditingController();
-
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
   bool loading = false;
 
   @override
@@ -41,8 +39,7 @@ class _LoginScreenState
 
         child: Column(
 
-          mainAxisAlignment:
-              MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
 
@@ -55,9 +52,7 @@ class _LoginScreenState
             const SizedBox(height: 30),
 
             TextField(
-
               controller: emailController,
-
               decoration: const InputDecoration(
                 labelText: "Email",
                 border: OutlineInputBorder(),
@@ -67,12 +62,8 @@ class _LoginScreenState
             const SizedBox(height: 20),
 
             TextField(
-
-              controller:
-                  passwordController,
-
+              controller: passwordController,
               obscureText: true,
-
               decoration: const InputDecoration(
                 labelText: "Contraseña",
                 border: OutlineInputBorder(),
@@ -82,73 +73,41 @@ class _LoginScreenState
             const SizedBox(height: 30),
 
             SizedBox(
-
               width: double.infinity,
               height: 55,
-
               child: ElevatedButton(
+                onPressed: loading ? null : () async {
+                  setState(() {
+                    loading = true;
+                  });
 
-                onPressed: loading
-                    ? null
-                    : () async {
+                  try {
+                    User user = await ApiService().login(
+                      emailController.text,
+                      passwordController.text,
+                    );
+                    await SessionService().saveUserId(user.id);
 
-                        setState(() {
-                          loading = true;
-                        });
-
-                        try {
-
-                          User user =
-                              await ApiService()
-                                  .login(
-
-                            emailController.text,
-                            passwordController.text,
-                          );
-                          await SessionService().saveUserId(user.id);
-
-                          Navigator.pushReplacement(
-
-                            context,
-
-                            MaterialPageRoute(
-                              builder:
-                                  (context) =>
-                                      HomeScreen(
-                                user: user,
-                              ),
-                            ),
-                          );
-
-                        } catch (e) {
-
-                          ScaffoldMessenger.of(
-                                  context)
-                              .showSnackBar(
-
-                            SnackBar(
-                              content: Text(
-                                e.toString(),
-                              ),
-                            ),
-                          );
-                        } finally {
-
-                          setState(() {
-                            loading = false;
-                          });
-                        }
-                      },
-
+                    if (context.mounted) {
+                      _navigateByRole(context, user);
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  } finally {
+                    setState(() {
+                      loading = false;
+                    });
+                  }
+                },
                 child: loading
-                    ? const CircularProgressIndicator(
-                        color: Colors.white,
-                      )
+                    ? const CircularProgressIndicator(color: Colors.white)
                     : const Text(
                         "Iniciar sesión",
-                        style: TextStyle(
-                          fontSize: 18,
-                        ),
+                        style: TextStyle(fontSize: 18),
                       ),
               ),
             ),
@@ -156,27 +115,69 @@ class _LoginScreenState
             const SizedBox(height: 15),
 
             TextButton(
-
               onPressed: () {
-
                 Navigator.push(
-
                   context,
-
                   MaterialPageRoute(
-                    builder: (_) =>
-                        const RegisterScreen(),
+                    builder: (_) => RegisterScreen(role: widget.role),
                   ),
                 );
               },
+              child: const Text("Registrarse"),
+            ),
 
-              child: const Text(
-                "Registrarse",
-              ),
+            const SizedBox(height: 10),
+
+            TextButton(
+              onPressed: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RoleSelectionScreen(),
+                  ),
+                );
+              },
+              child: const Text("Volver a seleccionar rol"),
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _navigateByRole(BuildContext context, User user) {
+    switch (widget.role) {
+      case 'user':
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(user: user),
+          ),
+        );
+        break;
+      case 'event_manager':
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => EventManagementScreen(user: user),
+          ),
+        );
+        break;
+      case 'admin':
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => AdminScreen(user: user),
+          ),
+        );
+        break;
+      default:
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(user: user),
+          ),
+        );
+    }
   }
 }
