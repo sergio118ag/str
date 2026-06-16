@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/user.dart';
 import '../services/api_service.dart';
+import '../services/session_service.dart';
 import 'home_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -196,21 +197,28 @@ class _RegisterScreenState
                               phoneController.text,
                             );
 
-                            Navigator.pushReplacement(
+                            await SessionService().saveUserId(user.id);
 
-                              context,
+                            if (context.mounted) {
 
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    HomeScreen(
-                                  user: user,
+                              Navigator.pushReplacement(
+
+                                context,
+
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      HomeScreen(
+                                    user: user,
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            }
 
                           } catch (e) {
 
-                            ScaffoldMessenger.of(
+                            if (context.mounted) {
+
+                              ScaffoldMessenger.of(
                                     context)
                                 .showSnackBar(
 
@@ -220,6 +228,7 @@ class _RegisterScreenState
                                 ),
                               ),
                             );
+                            }
 
                           } finally {
 

@@ -13,40 +13,21 @@ class ApiService {
 
   final String baseUrl = "http://localhost:8080";
 
-  Future<User> login(
-    String email,
-    String password,
-  ) async {
-
-    final response =
-        await http.post(
-
-      Uri.parse(
-        "$baseUrl/users/login",
-      ),
-
-      headers: {
-        "Content-Type":
-            "application/json",
-      },
-
-      body: jsonEncode({
-
-        "email": email,
-        "password": password,
-      }),
+  Future<User> login(String email, String password) async {
+    final response = await http.post(
+      Uri.parse("$baseUrl/users/login"),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode({"email": email, "password": password}),
     );
+
+    print("Respuesta status: ${response.statusCode}");
+    print("Respuesta body: ${response.body}");
 
     if (response.statusCode == 200) {
-
-      return User.fromJson(
-        jsonDecode(response.body),
-      );
+      return User.fromJson(jsonDecode(response.body));
     }
 
-    throw Exception(
-      "Email o contraseña incorrectos",
-    );
+    throw Exception("Email o contraseña incorrectos");
   }
 
   Future<User> register(
@@ -290,6 +271,22 @@ class ApiService {
     }
   }
 
+  Future<User> redeemRewardAndGetUser(
+    int userId,
+    int rewardId,
+  ) async {
+
+    final response = await http.post(
+      Uri.parse("$baseUrl/redeemed-rewards/redeem?userId=$userId&rewardId=$rewardId"),
+    );
+
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    }
+
+    throw Exception("Error al canjear recompensa");
+  }
+
   Future<void> useReward(
     int rewardId,
   ) async {
@@ -340,6 +337,7 @@ class ApiService {
       "Error al cargar recompensas canjeadas",
     );
   }
+  
   Future<User> updateUser(
   User user,
   ) async {
