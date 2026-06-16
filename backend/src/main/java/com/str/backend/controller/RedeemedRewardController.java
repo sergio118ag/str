@@ -1,13 +1,22 @@
 package com.str.backend.controller;
 
-import com.str.backend.model.*;
-import com.str.backend.repository.*;
-import com.str.backend.service.QrService;
-
-import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.str.backend.model.RedeemedReward;
+import com.str.backend.model.Reward;
+import com.str.backend.model.User;
+import com.str.backend.repository.RedeemedRewardRepository;
+import com.str.backend.repository.RewardRepository;
+import com.str.backend.repository.UserRepository;
+import com.str.backend.service.QrService;
 
 @RestController
 @RequestMapping("/redeemed-rewards")
@@ -31,7 +40,7 @@ public class RedeemedRewardController {
     }
 
     @PostMapping("/redeem")
-    public RedeemedReward redeemReward(
+    public User redeemReward(
             @RequestParam Long userId,
             @RequestParam Long rewardId) {
 
@@ -51,25 +60,16 @@ public class RedeemedRewardController {
 
         userRepository.save(user);
 
-        RedeemedReward redeemedReward =
-                new RedeemedReward();
-
+        RedeemedReward redeemedReward = new RedeemedReward();
         redeemedReward.setUser(user);
         redeemedReward.setReward(reward);
-
-        redeemedReward.setRedeemedAt(
-                LocalDateTime.now()
-        );
-
-        redeemedReward.setQrCode(
-                "reward-" + System.currentTimeMillis()
-        );
-
+        redeemedReward.setRedeemedAt(LocalDateTime.now());
+        redeemedReward.setQrCode("reward-" + System.currentTimeMillis());
         redeemedReward.setUsed(false);
-
-        return redeemedRewardRepository.save(
-                redeemedReward
-        );
+        
+        redeemedRewardRepository.save(redeemedReward);
+        
+        return user;
     }
 
     @PostMapping("/use/{id}")
