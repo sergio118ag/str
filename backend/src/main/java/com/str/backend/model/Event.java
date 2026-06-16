@@ -3,6 +3,8 @@ package com.str.backend.model;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,6 +42,7 @@ public class Event {
     private Set<User> users;
 
     @OneToMany(mappedBy = "event")
+    @JsonIgnore
     private List<Ticket> tickets;
 
     public Event() {}

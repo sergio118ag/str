@@ -10,4 +10,5 @@ public interface PurchaseRepository extends JpaRepository<Purchase, Long> {
     Purchase findByQrCode(String qrCode);
     
     List<Purchase> findByUser_Id(Long userId);
+    List<Purchase> findByEventId(Long eventId);
 }

@@ -5,6 +5,9 @@ import '../services/api_service.dart';
 import 'event_create_screen.dart';
 import 'event_edit_screen.dart';
 import 'event_detail_screen.dart';
+import 'event_stats_screen.dart';
+import 'event_attendees_screen.dart';
+import 'event_products_screen.dart';
 import 'role_selection_screen.dart';
 import '../services/session_service.dart';
 
@@ -145,6 +148,49 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        // Botón Estadísticas
+                        IconButton(
+                          icon: const Icon(Icons.analytics, color: Colors.green),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventStatsScreen(
+                                  event: event,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        // Botón Asistentes
+                        IconButton(
+                          icon: const Icon(Icons.people, color: Colors.purple),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventAttendeesScreen(
+                                  event: event,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        // Botón Productos
+                        IconButton(
+                          icon: const Icon(Icons.shopping_bag, color: Colors.orange),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventProductsScreen(
+                                  event: event,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        // Botón Editar
                         IconButton(
                           icon: const Icon(Icons.edit, color: Colors.blue),
                           onPressed: () async {
@@ -161,6 +207,7 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
                             }
                           },
                         ),
+                        // Botón Eliminar
                         IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () async {

@@ -8,6 +8,7 @@ import '../models/user.dart';
 import '../models/reward.dart';
 import '../models/redeemed_reward.dart';
 import '../models/ticket.dart';
+import '../models/product.dart';
 
 class ApiService {
 
@@ -173,6 +174,31 @@ class ApiService {
     throw Exception('Error al cargar evento');
   }
 
+  Future<Map<String, dynamic>> getEventStats(int eventId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/events/$eventId/stats'),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Error al cargar estadísticas');
+    }
+  }
+
+  Future<List<User>> getAttendeesByEvent(int eventId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/purchases/event/$eventId/attendees'),
+    );
+
+    if (response.statusCode == 200) {
+      List jsonData = json.decode(response.body);
+      return jsonData.map((user) => User.fromJson(user)).toList();
+    } else {
+      throw Exception('Error al cargar asistentes');
+    }
+  }
+
   Future<Event> createEvent(Map<String, dynamic> eventData, int organizerId) async {
     final response = await http.post(
       Uri.parse('$baseUrl/events?organizerId=$organizerId'),
@@ -221,6 +247,58 @@ class ApiService {
     }
 
     throw Exception('Error al actualizar aforo');
+  }
+
+  // ========== PRODUCTOS ==========
+  Future<List<Product>> getProductsByEvent(int eventId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/products/event/$eventId'),
+    );
+
+    if (response.statusCode == 200) {
+      List jsonData = json.decode(response.body);
+      return jsonData.map((product) => Product.fromJson(product)).toList();
+    } else {
+      throw Exception('Error al cargar productos');
+    }
+  }
+
+  Future<Product> createProduct(Map<String, dynamic> productData, int eventId) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/products?eventId=$eventId'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(productData),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Product.fromJson(jsonDecode(response.body));
+    }
+
+    throw Exception('Error al crear producto');
+  }
+
+  Future<Product> updateProduct(int productId, Map<String, dynamic> productData) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/products/$productId'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(productData),
+    );
+
+    if (response.statusCode == 200) {
+      return Product.fromJson(jsonDecode(response.body));
+    }
+
+    throw Exception('Error al actualizar producto');
+  }
+
+  Future<void> deleteProduct(int productId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/products/$productId'),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al eliminar producto');
+    }
   }
 
   Future<List<Ticket>> getTicketsByEvent(

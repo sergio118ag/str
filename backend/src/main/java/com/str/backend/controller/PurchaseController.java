@@ -2,6 +2,7 @@ package com.str.backend.controller;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -113,5 +114,13 @@ public class PurchaseController {
     public byte[] getQrImage(@PathVariable Long id) throws Exception {
         Purchase purchase = purchaseRepository.findById(id).orElseThrow();
         return qrService.generateQr(purchase.getQrCode());
+    }
+    @GetMapping("/event/{eventId}/attendees")
+    public List<User> getAttendeesByEvent(@PathVariable Long eventId) {
+        List<Purchase> purchases = purchaseRepository.findByEventId(eventId);
+        return purchases.stream()
+            .map(Purchase::getUser)
+            .distinct()
+            .collect(Collectors.toList());
     }
 }

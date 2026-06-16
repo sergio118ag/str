@@ -1,6 +1,8 @@
 package com.str.backend.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.str.backend.model.Event;
+import com.str.backend.model.Purchase;
 import com.str.backend.model.User;
 import com.str.backend.repository.EventRepository;
+import com.str.backend.repository.PurchaseRepository;
 import com.str.backend.repository.UserRepository;
 
 @RestController
@@ -25,10 +29,12 @@ public class EventController {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final PurchaseRepository purchaseRepository;
 
-    public EventController(EventRepository eventRepository, UserRepository userRepository) {
+    public EventController(EventRepository eventRepository, UserRepository userRepository, PurchaseRepository purchaseRepository) {
         this.eventRepository = eventRepository;
         this.userRepository = userRepository;
+        this.purchaseRepository = purchaseRepository;
     }
 
     @PostMapping
@@ -57,6 +63,28 @@ public class EventController {
     @GetMapping("/organizer/{organizerId}")
     public List<Event> getEventsByOrganizer(@PathVariable Long organizerId) {
         return eventRepository.findByOrganizerId(organizerId);
+    }
+
+    @GetMapping("/{id}/stats")
+    public Map<String, Object> getEventStats(@PathVariable Long id) {
+        Event event = eventRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
+        
+        List<Purchase> purchases = purchaseRepository.findByEventId(id);
+        
+        long totalAttendees = purchases.stream().map(Purchase::getUser).distinct().count();
+        int totalTicketsSold = purchases.size();
+        double totalRevenue = purchases.stream().mapToDouble(Purchase::getPrice).sum();
+        
+        Map<String, Object> stats = new HashMap<>();
+        stats.put("eventName", event.getName());
+        stats.put("totalAttendees", totalAttendees);
+        stats.put("totalTicketsSold", totalTicketsSold);
+        stats.put("totalRevenue", totalRevenue);
+        stats.put("capacity", event.getCapacity());
+        stats.put("available", event.getAvailable());
+        
+        return stats;
     }
 
     @PutMapping("/{id}")
