@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../models/event.dart';
+import '../models/user.dart';
 import '../services/api_service.dart';
 import 'event_detail_screen.dart';
 
 class EventsScreen extends StatefulWidget {
-  const EventsScreen({super.key});
+  final User? user;
+  const EventsScreen({super.key, this.user});
 
   @override
   State<EventsScreen> createState() => _EventsScreenState();
@@ -37,7 +39,13 @@ class _EventsScreenState extends State<EventsScreen> {
             return Center(child: Text(snapshot.error.toString()));
           }
 
-          final data = snapshot.data!;
+          final data = snapshot.data ?? [];
+
+          if (data.isEmpty) {
+            return const Center(
+              child: Text("No hay eventos disponibles"),
+            );
+          }
 
           return ListView.builder(
             itemCount: data.length,
@@ -45,27 +53,6 @@ class _EventsScreenState extends State<EventsScreen> {
             itemBuilder: (context, index) {
               final event = data[index];
 
-              //   return Card(
-
-              //     margin: const EdgeInsets.all(10),
-
-              //     child: ListTile(
-
-              //       title: Text(event.name),
-
-              //       subtitle: Column(
-              //         crossAxisAlignment:
-              //             CrossAxisAlignment.start,
-
-              //         children: [
-
-              //           Text(event.description),
-              //           Text(event.location),
-
-              //         ],
-              //       ),
-              //     ),
-              //   );
               return Container(
                 margin: const EdgeInsets.all(12),
 
@@ -85,12 +72,27 @@ class _EventsScreenState extends State<EventsScreen> {
                           top: Radius.circular(20),
                         ),
 
-                        child: Image.asset(
-                          'assets/images/event.jpg',
-                          height: 200,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
+                        child: event.imageUrl.isNotEmpty
+                            ? Image.network(
+                                event.imageUrl,
+                                height: 200,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    'assets/images/event.jpg',
+                                    height: 200,
+                                    width: double.infinity,
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              )
+                            : Image.asset(
+                                'assets/images/event.jpg',
+                                height: 200,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                              ),
                       ),
 
                       Padding(
@@ -125,7 +127,41 @@ class _EventsScreenState extends State<EventsScreen> {
 
                                 const SizedBox(width: 5),
 
-                                Text(event.location),
+                                Expanded(
+                                  child: Text(event.location),
+                                ),
+                              ],
+                            ),
+
+                            const SizedBox(height: 5),
+
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_today, size: 16),
+
+                                const SizedBox(width: 5),
+
+                                Text(event.eventDate),
+                              ],
+                            ),
+
+                            const SizedBox(height: 5),
+
+                            Row(
+                              children: [
+                                const Icon(Icons.people, size: 16),
+
+                                const SizedBox(width: 5),
+
+                                Text(
+                                  "Disponibles: ${event.available}/${event.capacity}",
+                                  style: TextStyle(
+                                    color: event.available > 0 
+                                        ? Colors.green 
+                                        : Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ],
                             ),
 
@@ -135,20 +171,27 @@ class _EventsScreenState extends State<EventsScreen> {
                               width: double.infinity,
 
                               child: ElevatedButton(
-                                onPressed: () {
-
-                                    Navigator.push(
-
+                              onPressed: event.available > 0
+                                  ? () {
+                                      print("Usuario pasado a EventDetailScreen: ${widget.user?.name} - Rol: ${widget.user?.role}"); 
+                                      Navigator.push(
                                         context,
-
                                         MaterialPageRoute(
-                                            builder: (context) =>
-                                                EventDetailScreen(event: event),
+                                          builder: (context) =>
+                                              EventDetailScreen(
+                                                event: event,
+                                                user: widget.user,
+                                              ),
                                         ),
-                                    );
-                                },
+                                      );
+                                    }
+                                  : null,
 
-                                child: const Text("Ver evento"),
+                                child: Text(
+                                  event.available > 0 
+                                      ? "Ver evento" 
+                                      : "Agotado",
+                                ),
                               ),
                             ),
                           ],

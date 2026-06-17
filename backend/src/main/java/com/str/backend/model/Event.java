@@ -1,7 +1,19 @@
 package com.str.backend.model;
 
-import jakarta.persistence.*;
+import java.util.List;
 import java.util.Set;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "events")
@@ -16,72 +28,77 @@ public class Event {
     private String location;
     private Double ticketPrice;
     private Integer capacity;
+    private Integer available;
     private String eventDate;
+    private String imageUrl;
+    private String category;
+    private Boolean active = true;
+
+    @ManyToOne
+    @JoinColumn(name = "organizer_id")
+    private User organizer;
 
     @ManyToMany(mappedBy = "events")
     private Set<User> users;
 
+    @OneToMany(mappedBy = "event")
+    @JsonIgnore
+    private List<Ticket> tickets;
+
     public Event() {}
 
-    public Event(String name, String description, String location, Double ticketPrice, Integer capacity, String eventDate) {
+    public Event(String name, String description, String location, Double ticketPrice, 
+                 Integer capacity, String eventDate, String category) {
         this.name = name;
         this.description = description;
         this.location = location;
         this.ticketPrice = ticketPrice;
         this.capacity = capacity;
+        this.available = capacity;
         this.eventDate = eventDate;
+        this.category = category;
+        this.active = true;
     }
 
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public Long getId() {
-        return id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
 
-    public String getDescription() {
-        return description;
-    }
+    public Double getTicketPrice() { return ticketPrice; }
+    public void setTicketPrice(Double ticketPrice) { this.ticketPrice = ticketPrice; }
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    public Integer getCapacity() { return capacity; }
+    public void setCapacity(Integer capacity) { this.capacity = capacity; }
 
-    public String getLocation() {
-        return location;
-    }
+    public Integer getAvailable() { return available; }
+    public void setAvailable(Integer available) { this.available = available; }
 
-    public void setLocation(String location) {
-        this.location = location;
-    }
-    
-    public Double getTicketPrice() {
-        return ticketPrice;
-    }
+    public String getEventDate() { return eventDate; }
+    public void setEventDate(String eventDate) { this.eventDate = eventDate; }
 
-    public void setTicketPrice(Double ticketPrice) {
-        this.ticketPrice = ticketPrice;
-    }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public Integer getCapacity() {
-        return capacity;
-    }
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
-    public void setCapacity(Integer capacity) {
-        this.capacity = capacity;
-    }
+    public Boolean getActive() { return active; }
+    public void setActive(Boolean active) { this.active = active; }
 
-    public String getEventDate() {
-        return eventDate;
-    }
+    public User getOrganizer() { return organizer; }
+    public void setOrganizer(User organizer) { this.organizer = organizer; }
 
-    public void setEventDate(String eventDate) {
-        this.eventDate = eventDate;
-    }
+    public Set<User> getUsers() { return users; }
+    public void setUsers(Set<User> users) { this.users = users; }
+
+    public List<Ticket> getTickets() { return tickets; }
+    public void setTickets(List<Ticket> tickets) { this.tickets = tickets; }
 }

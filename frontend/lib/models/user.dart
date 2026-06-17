@@ -11,6 +11,7 @@ class User {
   final String city;
   final int age;
   final String phone;
+  final String role;
 
   User({
     required this.id,
@@ -23,24 +24,23 @@ class User {
     required this.city,
     required this.age,
     required this.phone,
+    required this.role,
   });
 
-  factory User.fromJson(
-    Map<String, dynamic> json,
-  ) {
-
+  factory User.fromJson(Map<String, dynamic> json) {
     return User(
       id: json['id'],
       name: json['name'],
       email: json['email'],
       password: json['password'] ?? "",
       points: json['points'] ?? 0,
-
+      
       address: json['address'] ?? "",
       postalCode: json['postalCode'] ?? "",
       city: json['city'] ?? "",
       age: json['age'] ?? 0,
       phone: json['phone'] ?? "",
+      role: json['role'] ?? "asistente",
     );
   }
 }

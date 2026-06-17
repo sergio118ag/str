@@ -1,6 +1,9 @@
 package com.str.backend.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 
 @Entity
 public class Reward {
@@ -54,4 +57,9 @@ public class Reward {
     public void setPointsRequired(Integer pointsRequired) {
         this.pointsRequired = pointsRequired;
     }
+    private Boolean active = true;
+
+    public Boolean getActive() { return active; }
+    
+    public void setActive(Boolean active) { this.active = active; }
 }

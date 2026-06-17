@@ -2,6 +2,7 @@ package com.str.backend.model;
 
 import java.util.Set;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +29,9 @@ public class User {
     private String city;
     private Integer age;
     private String phone;
+
+    @Column(nullable = false)
+    private String role = "asistente";
     
     @ManyToMany
     @JoinTable(
@@ -58,6 +62,7 @@ public class User {
         this.age = age;
         this.phone = phone;
         this.points = 0;
+        this.role = "asistente";
     }
 
     public Long getId() {
@@ -95,7 +100,6 @@ public class User {
     public void setPoints(Integer points) {
         this.points = points;
     }
-
 
     public String getAddress() {
         return address;
@@ -136,9 +140,17 @@ public class User {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
     
     public Set<Event> getEvents() {
-    return events;
+        return events;
     }
 
     public void setEvents(Set<Event> events) {

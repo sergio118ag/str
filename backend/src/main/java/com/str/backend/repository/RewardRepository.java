@@ -1,9 +1,11 @@
 package com.str.backend.repository;
 
-import com.str.backend.model.Reward;
+import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RewardRepository
-        extends JpaRepository<Reward, Long> {
+import com.str.backend.model.Reward;
+
+public interface RewardRepository extends JpaRepository<Reward, Long> {
+        List<Reward> findByActiveTrue();
 }
