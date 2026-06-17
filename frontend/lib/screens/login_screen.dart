@@ -28,6 +28,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
 
+    // Verificar si el rol es asistente para mostrar el botón de registro
+    bool showRegister = widget.role == 'asistente';
+
     return Scaffold(
 
       appBar: AppBar(
@@ -115,17 +118,19 @@ class _LoginScreenState extends State<LoginScreen> {
 
             const SizedBox(height: 15),
 
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => RegisterScreen(role: widget.role),
-                  ),
-                );
-              },
-              child: const Text("Registrarse"),
-            ),
+            // Mostrar "Registrarse" solo si es asistente
+            if (showRegister)
+              TextButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => RegisterScreen(role: widget.role),
+                    ),
+                  );
+                },
+                child: const Text("Registrarse"),
+              ),
 
             const SizedBox(height: 10),
 
@@ -148,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _navigateByRole(BuildContext context, User user) {
     switch (widget.role) {
-      case 'user':
+      case 'asistente':
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -172,14 +177,14 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
         break;
-      case 'staff':  // ✅ AÑADE ESTE CASO
+      case 'staff':
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
             builder: (context) => StaffScreen(user: user),
           ),
-      );
-      break;
+        );
+        break;
       default:
         Navigator.pushReplacement(
           context,

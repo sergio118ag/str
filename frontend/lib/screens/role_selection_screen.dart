@@ -43,7 +43,7 @@ class RoleSelectionScreen extends StatelessWidget {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => LoginScreen(role: 'user'),
+                    builder: (context) => LoginScreen(role: 'asistente'),
                   ),
                 );
               },
@@ -80,7 +80,7 @@ class RoleSelectionScreen extends StatelessWidget {
                 );
               },
             ),
-                        _buildRoleButton(
+            _buildRoleButton(
               context: context,
               icon: Icons.qr_code_scanner,
               title: "Staff",
