@@ -80,6 +80,21 @@ class RoleSelectionScreen extends StatelessWidget {
                 );
               },
             ),
+                        _buildRoleButton(
+              context: context,
+              icon: Icons.qr_code_scanner,
+              title: "Staff",
+              subtitle: "Validar QR, gestionar incidencias y penalizaciones",
+              color: Colors.purple,
+              onTap: () {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => LoginScreen(role: 'staff'),
+                  ),
+                );
+              },
+            )
           ],
         ),
       ),

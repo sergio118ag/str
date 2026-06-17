@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.str.backend.model.Event;
 import com.str.backend.model.Purchase;
+import com.str.backend.model.RedeemedReward;
 import com.str.backend.model.Ticket;
 import com.str.backend.model.User;
 import com.str.backend.repository.EventRepository;
 import com.str.backend.repository.PurchaseRepository;
+import com.str.backend.repository.RedeemedRewardRepository;
 import com.str.backend.repository.TicketRepository;
 import com.str.backend.repository.UserRepository;
 import com.str.backend.service.QrService;
@@ -30,19 +32,22 @@ public class PurchaseController {
     private final EventRepository eventRepository;
     private final TicketRepository ticketRepository;
     private final QrService qrService;
+    private final RedeemedRewardRepository redeemedRewardRepository;
 
     public PurchaseController(
             PurchaseRepository purchaseRepository,
             UserRepository userRepository,
             EventRepository eventRepository,
             TicketRepository ticketRepository,
-            QrService qrService) {
+            QrService qrService,
+            RedeemedRewardRepository redeemedRewardRepository) {
 
         this.purchaseRepository = purchaseRepository;
         this.userRepository = userRepository;
         this.eventRepository = eventRepository;
         this.ticketRepository = ticketRepository;
         this.qrService = qrService;
+        this.redeemedRewardRepository = redeemedRewardRepository;
     }
 
     @PostMapping
@@ -115,6 +120,7 @@ public class PurchaseController {
         Purchase purchase = purchaseRepository.findById(id).orElseThrow();
         return qrService.generateQr(purchase.getQrCode());
     }
+
     @GetMapping("/event/{eventId}/attendees")
     public List<User> getAttendeesByEvent(@PathVariable Long eventId) {
         List<Purchase> purchases = purchaseRepository.findByEventId(eventId);
@@ -122,5 +128,56 @@ public class PurchaseController {
             .map(Purchase::getUser)
             .distinct()
             .collect(Collectors.toList());
+    }
+
+    // Validar QR de entrada (para Staff)
+    @GetMapping("/validate/{qrCode}")
+    public Purchase validateQR(@PathVariable String qrCode) {
+        Purchase purchase = purchaseRepository.findByQrCode(qrCode);
+        
+        if (purchase == null) {
+            throw new RuntimeException("QR no válido");
+        }
+        
+        if (purchase.getUsed()) {
+            throw new RuntimeException("Esta entrada ya ha sido utilizada");
+        }
+        
+        purchase.setUsed(true);
+        purchaseRepository.save(purchase);
+        
+        return purchase;
+    }
+
+    // Validar QR de recompensa (para Staff)
+    @GetMapping("/validate-reward/{qrCode}")
+    public RedeemedReward validateRewardQR(@PathVariable String qrCode) {
+        RedeemedReward reward = redeemedRewardRepository.findByQrCode(qrCode);
+        
+        if (reward == null) {
+            throw new RuntimeException("QR no válido");
+        }
+        
+        if (reward.isUsed()) {
+            throw new RuntimeException("Esta recompensa ya ha sido utilizada");
+        }
+        
+        reward.setUsed(true);
+        reward.setUsedAt(LocalDateTime.now());
+        redeemedRewardRepository.save(reward);
+        
+        return reward;
+    }
+
+    // Obtener compra por QR (sin validar)
+    @GetMapping("/info/{qrCode}")
+    public Purchase getPurchaseByQR(@PathVariable String qrCode) {
+        Purchase purchase = purchaseRepository.findByQrCode(qrCode);
+        
+        if (purchase == null) {
+            throw new RuntimeException("QR no válido");
+        }
+        
+        return purchase;
     }
 }

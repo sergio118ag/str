@@ -544,4 +544,42 @@ class ApiService {
       "Error al actualizar usuario",
     );
   }
+  // Staff - Validar QR de entrada
+  Future<Purchase> validateQR(String qrCode) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/purchases/validate/$qrCode'),
+    );
+
+    if (response.statusCode == 200) {
+      return Purchase.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('QR no válido o ya utilizado');
+    }
+  }
+
+  // Staff - Validar QR de recompensa
+  Future<RedeemedReward> validateRewardQR(String qrCode) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/purchases/validate-reward/$qrCode'),
+    );
+
+    if (response.statusCode == 200) {
+      return RedeemedReward.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('QR de recompensa no válido o ya utilizado');
+    }
+  }
+
+  // Staff - Obtener información de compra por QR
+  Future<Purchase> getPurchaseByQR(String qrCode) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/purchases/info/$qrCode'),
+    );
+
+    if (response.statusCode == 200) {
+      return Purchase.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('QR no válido');
+    }
+  }
 }
