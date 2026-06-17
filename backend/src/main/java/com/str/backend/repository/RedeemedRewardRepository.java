@@ -1,12 +1,15 @@
 package com.str.backend.repository;
 
-import com.str.backend.model.RedeemedReward;
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
+import com.str.backend.model.RedeemedReward;
 
 public interface RedeemedRewardRepository
         extends JpaRepository<RedeemedReward, Long> {
 
     List<RedeemedReward> findByUserId(Long userId);
+    
+    RedeemedReward findByQrCode(String qrCode);
 }

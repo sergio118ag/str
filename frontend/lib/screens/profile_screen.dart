@@ -189,6 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   city: cityController.text,
                                   age: int.tryParse(ageController.text) ?? 0,
                                   phone: phoneController.text,
+                                  role: widget.user.role,
                                 );
 
                                 final savedUser = await ApiService().updateUser(updatedUser);

@@ -1,0 +1,336 @@
+import 'package:flutter/material.dart';
+import '../models/event.dart';
+import '../models/user.dart';
+import '../services/api_service.dart';
+import 'event_create_screen.dart';
+import 'event_edit_screen.dart';
+import 'event_detail_screen.dart';
+import 'event_stats_screen.dart';
+import 'event_attendees_screen.dart';
+import 'event_products_screen.dart';
+import 'event_add_ticket_screen.dart';
+import 'role_selection_screen.dart';
+import '../services/session_service.dart';
+
+class EventManagementScreen extends StatefulWidget {
+  final User user;
+  
+  const EventManagementScreen({super.key, required this.user});
+
+  @override
+  State<EventManagementScreen> createState() => _EventManagementScreenState();
+}
+
+class _EventManagementScreenState extends State<EventManagementScreen> {
+  late Future<List<Event>> events;
+  bool _isAdmin = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _isAdmin = widget.user.role == 'admin';
+    loadEvents();
+  }
+
+  Future<void> loadEvents() async {
+    setState(() {
+      if (_isAdmin) {
+        events = ApiService().getAllEventsForAdmin();
+      } else {
+        events = ApiService().getEventsByOrganizer(widget.user.id);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(_isAdmin ? "Gestión de Eventos (Admin)" : "Gestión de Eventos"),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              await SessionService().logout();
+              if (context.mounted) {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const RoleSelectionScreen(),
+                  ),
+                );
+              }
+            },
+            icon: const Icon(Icons.logout),
+          ),
+        ],
+      ),
+      body: FutureBuilder<List<Event>>(
+        future: events,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text(snapshot.error.toString()));
+          }
+          final data = snapshot.data ?? [];
+          if (data.isEmpty) {
+            return const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.event_note, size: 80, color: Colors.grey),
+                  SizedBox(height: 20),
+                  Text(
+                    "No hay eventos disponibles",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "Presiona el botón + para crear uno",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                ],
+              ),
+            );
+          }
+          return RefreshIndicator(
+            onRefresh: loadEvents,
+            child: ListView.builder(
+              itemCount: data.length,
+              itemBuilder: (context, index) {
+                final event = data[index];
+                return Card(
+                  margin: const EdgeInsets.all(10),
+                  elevation: 4,
+                  child: ListTile(
+                    leading: event.imageUrl.isNotEmpty
+                        ? Image.network(
+                            event.imageUrl,
+                            width: 60,
+                            height: 60,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: 60,
+                                height: 60,
+                                color: Colors.grey[300],
+                                child: const Icon(Icons.event),
+                              );
+                            },
+                          )
+                        : Container(
+                            width: 60,
+                            height: 60,
+                            color: Colors.grey[300],
+                            child: const Icon(Icons.event),
+                          ),
+                    title: Text(
+                      event.name,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(event.location),
+                        const SizedBox(height: 5),
+                        Row(
+                          children: [
+                            const Icon(Icons.people, size: 14),
+                            const SizedBox(width: 5),
+                            Text(
+                              "Aforo máximo: ${event.capacity}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.confirmation_number, size: 14),
+                            const SizedBox(width: 5),
+                            Text(
+                              "Entradas disponibles: ${event.available}",
+                              style: TextStyle(
+                                color: event.available > 0 
+                                    ? Colors.green 
+                                    : Colors.red,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        if (_isAdmin && event.organizer != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                              "Organizador: ${event.organizer?.name ?? 'Desconocido'}",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Botón Añadir Entrada
+                        IconButton(
+                          icon: const Icon(Icons.confirmation_number, color: Colors.teal),
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventAddTicketScreen(
+                                  event: event,
+                                ),
+                              ),
+                            );
+                            if (result == true) {
+                              loadEvents();
+                            }
+                          },
+                        ),
+                        // Botón Estadísticas
+                        IconButton(
+                          icon: const Icon(Icons.analytics, color: Colors.green),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventStatsScreen(
+                                  event: event,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        // Botón Asistentes
+                        IconButton(
+                          icon: const Icon(Icons.people, color: Colors.purple),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventAttendeesScreen(
+                                  event: event,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        // Botón Productos
+                        IconButton(
+                          icon: const Icon(Icons.shopping_bag, color: Colors.orange),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventProductsScreen(
+                                  event: event,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        // Botón Editar
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventEditScreen(
+                                  event: event,
+                                ),
+                              ),
+                            );
+                            if (result == true) {
+                              loadEvents();
+                            }
+                          },
+                        ),
+                        // Botón Eliminar
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () async {
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                title: const Text("Confirmar eliminación"),
+                                content: Text("¿Seguro que quieres eliminar el evento ${event.name}?"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, false),
+                                    child: const Text("Cancelar"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, true),
+                                    child: const Text("Eliminar"),
+                                  ),
+                                ],
+                              ),
+                            );
+                            if (confirm == true) {
+                              try {
+                                await ApiService().deleteEvent(event.id);
+                                loadEvents();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Evento eliminado correctamente"),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(e.toString()),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EventDetailScreen(
+                            event: event,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                );
+              },
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => EventCreateScreen(
+                organizerId: widget.user.id,
+              ),
+            ),
+          );
+          if (result == true) {
+            loadEvents();
+          }
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
+  }
+}

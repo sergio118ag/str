@@ -172,11 +172,67 @@ class PurchaseDetailScreen extends StatelessWidget {
               Card(
                 child: Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Center(
-                    child: Image.network(
-                      "http://localhost:8080/purchases/qr-image/${purchase.id}",
-                      height: 220,
-                    ),
+                  child: Column(
+                    children: [
+                      // IMAGEN QR
+                      Image.network(
+                        "http://localhost:8080/purchases/qr-image/${purchase.id}",
+                        height: 220,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            height: 220,
+                            color: Colors.grey[200],
+                            child: const Center(
+                              child: Text(
+                                "No se pudo cargar el QR",
+                                style: TextStyle(color: Colors.grey),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 20),
+                      // TEXTO DEL CÓDIGO QR
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey[300]!),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(
+                              Icons.qr_code,
+                              color: Colors.purple,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: SelectableText(
+                                purchase.qrCode ?? 'Sin código QR',
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.purple,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        "Muestra este código al staff para validar tu compra",
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey[600],
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
                   ),
                 ),
               ),
