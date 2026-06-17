@@ -13,13 +13,16 @@ class WasteScreen extends StatefulWidget {
 
 class _WasteScreenState extends State<WasteScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _qrController = TextEditingController();
   final _userIdController = TextEditingController();
   final _eventIdController = TextEditingController();
   final _locationController = TextEditingController();
 
   String _selectedType = 'PLÁSTICO';
   bool _isLoading = false;
+  bool _isScanning = false;
   String _result = '';
+  String _scannedProduct = '';
 
   final List<String> _types = ['PLÁSTICO', 'VIDRIO', 'PAPEL', 'ORGÁNICO', 'OTRO'];
 
@@ -43,6 +46,72 @@ class _WasteScreenState extends State<WasteScreen> {
               ),
               const SizedBox(height: 30),
 
+              // QR Scanner
+              Card(
+                elevation: 4,
+                color: Colors.purple[50],
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextFormField(
+                              controller: _qrController,
+                              decoration: const InputDecoration(
+                                labelText: "Código QR del producto",
+                                border: OutlineInputBorder(),
+                                hintText: "Ej: ticket-1234567890",
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          ElevatedButton.icon(
+                            onPressed: _isScanning ? null : _scanQR,
+                            icon: const Icon(Icons.qr_code_scanner),
+                            label: Text(_isScanning ? "Buscando..." : "Escanear"),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.purple,
+                              foregroundColor: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (_scannedProduct.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 10),
+                          child: Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.green[100],
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Row(
+                              children: [
+                                const Icon(Icons.check_circle, color: Colors.green),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(
+                                    "Producto: $_scannedProduct",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+              const Divider(thickness: 1),
+              const SizedBox(height: 20),
+
               Form(
                 key: _formKey,
                 child: Column(
@@ -50,44 +119,29 @@ class _WasteScreenState extends State<WasteScreen> {
                     TextFormField(
                       controller: _userIdController,
                       decoration: const InputDecoration(
-                        labelText: "ID del Usuario",
+                        labelText: "ID del Usuario (autocompletado)",
                         border: OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Ingresa el ID del usuario";
-                        }
-                        if (int.tryParse(value) == null) {
-                          return "Ingresa un número válido";
-                        }
-                        return null;
-                      },
+                      readOnly: true,
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _eventIdController,
                       decoration: const InputDecoration(
-                        labelText: "ID del Evento",
+                        labelText: "ID del Evento (autocompletado)",
                         border: OutlineInputBorder(),
                       ),
                       keyboardType: TextInputType.number,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return "Ingresa el ID del evento";
-                        }
-                        if (int.tryParse(value) == null) {
-                          return "Ingresa un número válido";
-                        }
-                        return null;
-                      },
+                      readOnly: true,
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       controller: _locationController,
                       decoration: const InputDecoration(
-                        labelText: "Ubicación",
+                        labelText: "Ubicación del residuo",
                         border: OutlineInputBorder(),
+                        hintText: "Ej: Zona A, entrada principal",
                       ),
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -161,6 +215,53 @@ class _WasteScreenState extends State<WasteScreen> {
     );
   }
 
+  Future<void> _scanQR() async {
+    final qrCode = _qrController.text.trim();
+    if (qrCode.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Introduce un código QR"),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isScanning = true;
+      _result = '';
+    });
+
+    try {
+      final info = await ApiService().getPurchaseInfoByQR(qrCode);
+
+      setState(() {
+        _userIdController.text = info['userId'].toString();
+        _eventIdController.text = info['eventId'].toString();
+        _scannedProduct = "${info['productName']} (${info['price']}€) - ${info['userName']}";
+        _result = "✅ Producto identificado: ${info['productName']}\n"
+                  "Usuario: ${info['userName']}\n"
+                  "Evento: ${info['eventName']}";
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("QR escaneado correctamente"),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      setState(() {
+        _result = "❌ ${e.toString()}";
+        _scannedProduct = '';
+      });
+    } finally {
+      setState(() {
+        _isScanning = false;
+      });
+    }
+  }
+
   Future<void> _createWaste() async {
     if (_formKey.currentState?.validate() ?? false) {
       setState(() {
@@ -183,9 +284,11 @@ class _WasteScreenState extends State<WasteScreen> {
                     "Código QR: ${waste.qrCode}";
         });
 
+        _locationController.clear();
+        _qrController.clear();
+        _scannedProduct = '';
         _userIdController.clear();
         _eventIdController.clear();
-        _locationController.clear();
 
       } catch (e) {
         setState(() {
@@ -201,6 +304,7 @@ class _WasteScreenState extends State<WasteScreen> {
 
   @override
   void dispose() {
+    _qrController.dispose();
     _userIdController.dispose();
     _eventIdController.dispose();
     _locationController.dispose();

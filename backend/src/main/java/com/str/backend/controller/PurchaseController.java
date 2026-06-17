@@ -1,7 +1,9 @@
 package com.str.backend.controller;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -84,16 +86,13 @@ public class PurchaseController {
             throw new RuntimeException("No quedan entradas disponibles");
         }
 
-        // 1. Reducir stock del ticket
         ticket.setAvailable(ticket.getAvailable() - 1);
         ticketRepository.save(ticket);
 
-        // 2. Actualizar el aforo del evento
         Event event = ticket.getEvent();
         event.setAvailable(event.getAvailable() - 1);
         eventRepository.save(event);
 
-        // 3. Crear la compra
         Purchase purchase = new Purchase();
         purchase.setUser(user);
         purchase.setEvent(event);
@@ -186,5 +185,25 @@ public class PurchaseController {
         }
         
         return purchase;
+    }
+
+    // Obtener información de compra por QR de producto (para Staff - Trazabilidad)
+    @GetMapping("/product-qr/{qrCode}")
+    public Map<String, Object> getPurchaseInfoByQR(@PathVariable String qrCode) {
+        Purchase purchase = purchaseRepository.findByQrCode(qrCode);
+        
+        if (purchase == null) {
+            throw new RuntimeException("QR no válido");
+        }
+        
+        Map<String, Object> info = new HashMap<>();
+        info.put("userId", purchase.getUser().getId());
+        info.put("userName", purchase.getUser().getName());
+        info.put("eventId", purchase.getEvent().getId());
+        info.put("eventName", purchase.getEvent().getName());
+        info.put("productName", purchase.getProductName());
+        info.put("price", purchase.getPrice());
+        
+        return info;
     }
 }

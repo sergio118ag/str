@@ -15,8 +15,8 @@ class _IncidentScreenState extends State<IncidentScreen> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _userIdController = TextEditingController();
-  final _eventIdController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _eventNameController = TextEditingController();
   final _pointsController = TextEditingController();
 
   String _selectedType = 'COMPORTAMIENTO';
@@ -79,36 +79,34 @@ class _IncidentScreenState extends State<IncidentScreen> {
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      controller: _userIdController,
+                      controller: _emailController,
                       decoration: const InputDecoration(
-                        labelText: "ID del Usuario",
+                        labelText: "Email del Usuario",
                         border: OutlineInputBorder(),
+                        hintText: "ejemplo@email.com",
                       ),
-                      keyboardType: TextInputType.number,
+                      keyboardType: TextInputType.emailAddress,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Ingresa el ID del usuario";
+                          return "Ingresa el email del usuario";
                         }
-                        if (int.tryParse(value) == null) {
-                          return "Ingresa un número válido";
+                        if (!value.contains('@')) {
+                          return "Ingresa un email válido";
                         }
                         return null;
                       },
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      controller: _eventIdController,
+                      controller: _eventNameController,
                       decoration: const InputDecoration(
-                        labelText: "ID del Evento",
+                        labelText: "Nombre del Evento",
                         border: OutlineInputBorder(),
+                        hintText: "Ej: Concierto Dua Lipa",
                       ),
-                      keyboardType: TextInputType.number,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Ingresa el ID del evento";
-                        }
-                        if (int.tryParse(value) == null) {
-                          return "Ingresa un número válido";
+                          return "Ingresa el nombre del evento";
                         }
                         return null;
                       },
@@ -196,9 +194,9 @@ class _IncidentScreenState extends State<IncidentScreen> {
 
       try {
         final incident = await ApiService().createIncident(
-          int.parse(_userIdController.text),
+          _emailController.text,
           widget.user.id,
-          int.parse(_eventIdController.text),
+          _eventNameController.text,
           _titleController.text,
           _descriptionController.text,
           _selectedType,
@@ -214,8 +212,8 @@ class _IncidentScreenState extends State<IncidentScreen> {
 
         _titleController.clear();
         _descriptionController.clear();
-        _userIdController.clear();
-        _eventIdController.clear();
+        _emailController.clear();
+        _eventNameController.clear();
         _pointsController.clear();
 
       } catch (e) {
@@ -228,5 +226,15 @@ class _IncidentScreenState extends State<IncidentScreen> {
         });
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _emailController.dispose();
+    _eventNameController.dispose();
+    _pointsController.dispose();
+    super.dispose();
   }
 }

@@ -37,20 +37,20 @@ public class IncidentController {
     }
 
     @PostMapping
-    public Incident createIncident(@RequestParam Long userId,
+    public Incident createIncident(@RequestParam String email,
                                    @RequestParam Long staffId,
-                                   @RequestParam Long eventId,
+                                   @RequestParam String eventName,
                                    @RequestParam String title,
                                    @RequestParam String description,
                                    @RequestParam String type,
                                    @RequestParam(required = false) Integer pointsPenalty) {
 
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con email: " + email));
         User staff = userRepository.findById(staffId)
                 .orElseThrow(() -> new RuntimeException("Staff no encontrado"));
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Evento no encontrado"));
+        Event event = eventRepository.findByName(eventName)
+                .orElseThrow(() -> new RuntimeException("Evento no encontrado con nombre: " + eventName));
 
         Incident incident = new Incident();
         incident.setTitle(title);

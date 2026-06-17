@@ -100,8 +100,9 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
     }
   }
 
-  bool _isOrganizer() {
-    return _currentUser?.role == 'event_manager' || _currentUser?.role == 'admin';
+  bool _isOrganizerOrStaff() {
+    String? role = _currentUser?.role;
+    return role == 'event_manager' || role == 'admin' || role == 'staff';
   }
 
   @override
@@ -173,7 +174,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                         return Column(
                           children: list.map((ticket) {
                             bool isAvailable = ticket.available > 0;
-                            bool showBuyButton = !_isOrganizer() && isAvailable;
+                            bool showBuyButton = !_isOrganizerOrStaff() && isAvailable;
 
                             return Card(
                               child: ListTile(
@@ -181,7 +182,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                                 subtitle: Text(
                                   "${ticket.price} € - Disponibles: ${ticket.available}",
                                 ),
-                                trailing: _isOrganizer()
+                                trailing: _isOrganizerOrStaff()
                                     ? Container(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 12,

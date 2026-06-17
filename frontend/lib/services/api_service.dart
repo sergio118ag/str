@@ -605,12 +605,11 @@ class ApiService {
       throw Exception('QR no válido');
     }
   }
-
   // Staff - Crear incidencia
   Future<Incident> createIncident(
-    int userId,
+    String email,
     int staffId,
-    int eventId,
+    String eventName,
     String title,
     String description,
     String type,
@@ -618,7 +617,7 @@ class ApiService {
   ) async {
     final response = await http.post(
       Uri.parse(
-        '$baseUrl/incidents?userId=$userId&staffId=$staffId&eventId=$eventId&title=$title&description=$description&type=$type&pointsPenalty=$pointsPenalty'
+        '$baseUrl/incidents?email=$email&staffId=$staffId&eventName=$eventName&title=$title&description=$description&type=$type&pointsPenalty=$pointsPenalty'
       ),
     );
 
@@ -838,4 +837,16 @@ class ApiService {
       throw Exception('Error al cargar todos los eventos');
     }
   }
+  // Staff - Obtener información de compra por QR de producto (para trazabilidad de residuos)
+  Future<Map<String, dynamic>> getPurchaseInfoByQR(String qrCode) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/purchases/product-qr/$qrCode'),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('QR no válido');
+    }
+}
 }
