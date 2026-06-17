@@ -3,6 +3,9 @@ import '../models/user.dart';
 import '../services/session_service.dart';
 import 'role_selection_screen.dart';
 import 'qr_scanner_screen.dart';
+import 'incident_screen.dart';
+import 'waste_screen.dart';
+import 'staff_events_screen.dart';
 
 class StaffScreen extends StatefulWidget {
   final User user;
@@ -79,9 +82,10 @@ class _StaffScreenState extends State<StaffScreen> {
               subtitle: "Registrar incidencias durante eventos",
               color: Colors.orange,
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Función en desarrollo"),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => IncidentScreen(user: widget.user),
                   ),
                 );
               },
@@ -93,9 +97,10 @@ class _StaffScreenState extends State<StaffScreen> {
               subtitle: "Escanear y gestionar residuos",
               color: Colors.green,
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Función en desarrollo"),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WasteScreen(user: widget.user),
                   ),
                 );
               },
@@ -107,10 +112,11 @@ class _StaffScreenState extends State<StaffScreen> {
               subtitle: "Consultar eventos donde prestas servicio",
               color: Colors.blue,
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Función en desarrollo"),
-                  ),
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => StaffEventsScreen(user: widget.user),
+                    ),
                 );
               },
             ),

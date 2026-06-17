@@ -124,4 +124,8 @@ public class EventController {
         
         return eventRepository.save(event);
     }
+    @GetMapping("/staff/{staffId}")
+    public List<Event> getEventsByStaff(@PathVariable Long staffId) {
+        return eventRepository.findByActiveTrue();
+    }
 }

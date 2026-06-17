@@ -8,6 +8,7 @@ import 'event_management_screen.dart';
 import 'admin_screen.dart';
 import 'role_selection_screen.dart';
 import '../services/session_service.dart';
+import 'staff_screen.dart'; 
 
 class LoginScreen extends StatefulWidget {
   final String role;
@@ -171,6 +172,14 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         );
         break;
+      case 'staff':  // ✅ AÑADE ESTE CASO
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => StaffScreen(user: user),
+          ),
+      );
+      break;
       default:
         Navigator.pushReplacement(
           context,

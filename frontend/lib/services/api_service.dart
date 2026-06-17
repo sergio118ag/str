@@ -9,6 +9,8 @@ import '../models/reward.dart';
 import '../models/redeemed_reward.dart';
 import '../models/ticket.dart';
 import '../models/product.dart';
+import '../models/incident.dart';
+import '../models/waste.dart';
 
 class ApiService {
 
@@ -580,6 +582,80 @@ class ApiService {
       return Purchase.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('QR no válido');
+    }
+  }
+    // Staff - Crear incidencia
+  Future<Incident> createIncident(
+    int userId,
+    int staffId,
+    int eventId,
+    String title,
+    String description,
+    String type,
+    int pointsPenalty,
+  ) async {
+    final response = await http.post(
+      Uri.parse(
+        '$baseUrl/incidents?userId=$userId&staffId=$staffId&eventId=$eventId&title=$title&description=$description&type=$type&pointsPenalty=$pointsPenalty'
+      ),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Incident.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Error al crear incidencia');
+    }
+  }
+
+  // Staff - Obtener incidencias por evento
+  Future<List<Incident>> getIncidentsByEvent(int eventId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/incidents/event/$eventId'),
+    );
+
+    if (response.statusCode == 200) {
+      List jsonData = json.decode(response.body);
+      return jsonData.map((incident) => Incident.fromJson(incident)).toList();
+    } else {
+      throw Exception('Error al cargar incidencias');
+    }
+  }
+
+  // Staff - Actualizar estado de incidencia
+  Future<Incident> updateIncidentStatus(int incidentId, String status) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/incidents/$incidentId/status?status=$status'),
+    );
+
+    if (response.statusCode == 200) {
+      return Incident.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Error al actualizar incidencia');
+    }
+  }
+    // Staff - Crear residuo
+  Future<Waste> createWaste(int userId, int eventId, String location, String type) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/waste?userId=$userId&eventId=$eventId&location=$location&type=$type'),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Waste.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Error al registrar residuo');
+    }
+  }
+  // Staff - Obtener eventos donde presta servicio
+  Future<List<Event>> getEventsByStaff(int staffId) async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/events/staff/$staffId'),
+    );
+
+    if (response.statusCode == 200) {
+      List jsonData = json.decode(response.body);
+      return jsonData.map((event) => Event.fromJson(event)).toList();
+    } else {
+      throw Exception('Error al cargar eventos del staff');
     }
   }
 }
