@@ -765,5 +765,44 @@ class ApiService {
     } else {
       throw Exception('Error al cargar estadísticas');
     }
+    }
+  // Admin - Obtener usuarios con puntos
+  Future<List<User>> getUsersWithPoints() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/users/all'),
+    );
+
+    if (response.statusCode == 200) {
+      List jsonData = json.decode(response.body);
+      return jsonData.map((user) => User.fromJson(user)).toList();
+    } else {
+      throw Exception('Error al cargar usuarios');
+    }
+  }
+
+  // Admin - Añadir puntos a un usuario
+  Future<User> addPointsAdmin(int userId, int amount) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/users/$userId/add-points?amount=$amount'),
+    );
+
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Error al añadir puntos');
+    }
+  }
+
+  // Admin - Restar puntos a un usuario
+  Future<User> removePointsAdmin(int userId, int amount) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/users/$userId/remove-points?amount=$amount'),
+    );
+
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Error al restar puntos');
+    }
   }
 }

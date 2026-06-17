@@ -6,6 +6,7 @@ import 'event_management_screen.dart';
 import 'admin_users_screen.dart';
 import 'admin_rewards_screen.dart';
 import 'admin_dashboard_screen.dart';
+import 'admin_points_screen.dart';
 
 class AdminScreen extends StatefulWidget {
   final User user;
@@ -128,10 +129,11 @@ class _AdminScreenState extends State<AdminScreen> {
               title: "Gestionar Puntos",
               subtitle: "Ver y ajustar puntos de usuarios",
               color: Colors.purple,
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Función en desarrollo"),
+               onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AdminPointsScreen(),
                   ),
                 );
               },
