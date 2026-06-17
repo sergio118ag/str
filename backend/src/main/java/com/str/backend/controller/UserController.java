@@ -2,6 +2,8 @@ package com.str.backend.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +19,7 @@ import com.str.backend.repository.UserRepository;
 
 @RestController
 @RequestMapping("/users")
+@CrossOrigin(origins = "*")
 public class UserController {
 
     private final UserRepository userRepository;
@@ -31,9 +34,15 @@ public class UserController {
         return userRepository.save(user);
     }
 
-    // Obtener todos
+    // Obtener todos los usuarios (incluye roles)
     @GetMapping
     public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+
+    // Obtener todos los usuarios con roles (para admin)
+    @GetMapping("/all")
+    public List<User> getAllUsersWithRoles() {
         return userRepository.findAll();
     }
     
@@ -90,6 +99,7 @@ public class UserController {
 
         return user;
     }
+
     @PutMapping("/{id}")
     public User updateUser(
             @PathVariable Long id,
@@ -100,7 +110,6 @@ public class UserController {
 
         user.setName(updatedUser.getName());
         user.setEmail(updatedUser.getEmail());
-
         user.setAddress(updatedUser.getAddress());
         user.setPostalCode(updatedUser.getPostalCode());
         user.setCity(updatedUser.getCity());
@@ -108,5 +117,22 @@ public class UserController {
         user.setPhone(updatedUser.getPhone());
 
         return userRepository.save(user);
+    }
+
+    // ADMIN - Cambiar rol de usuario
+    @PutMapping("/{id}/role")
+    public User updateUserRole(@PathVariable Long id, @RequestParam String role) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        user.setRole(role);
+        return userRepository.save(user);
+    }
+
+    // ADMIN - Eliminar usuario (borrado físico)
+    @DeleteMapping("/{id}")
+    public void deleteUser(@PathVariable Long id) {
+        User user = userRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        userRepository.deleteById(id);
     }
 }

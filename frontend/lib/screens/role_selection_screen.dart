@@ -36,7 +36,7 @@ class RoleSelectionScreen extends StatelessWidget {
             _buildRoleButton(
               context: context,
               icon: Icons.person,
-              title: "Usuario",
+              title: "Asistente",
               subtitle: "Ver eventos, comprar entradas, canjear recompensas",
               color: Colors.blue,
               onTap: () {

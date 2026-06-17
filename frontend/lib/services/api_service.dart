@@ -546,6 +546,7 @@ class ApiService {
       "Error al actualizar usuario",
     );
   }
+
   // Staff - Validar QR de entrada
   Future<Purchase> validateQR(String qrCode) async {
     final response = await http.get(
@@ -584,7 +585,8 @@ class ApiService {
       throw Exception('QR no válido');
     }
   }
-    // Staff - Crear incidencia
+
+  // Staff - Crear incidencia
   Future<Incident> createIncident(
     int userId,
     int staffId,
@@ -633,7 +635,8 @@ class ApiService {
       throw Exception('Error al actualizar incidencia');
     }
   }
-    // Staff - Crear residuo
+
+  // Staff - Crear residuo
   Future<Waste> createWaste(int userId, int eventId, String location, String type) async {
     final response = await http.post(
       Uri.parse('$baseUrl/waste?userId=$userId&eventId=$eventId&location=$location&type=$type'),
@@ -645,6 +648,7 @@ class ApiService {
       throw Exception('Error al registrar residuo');
     }
   }
+
   // Staff - Obtener eventos donde presta servicio
   Future<List<Event>> getEventsByStaff(int staffId) async {
     final response = await http.get(
@@ -656,6 +660,45 @@ class ApiService {
       return jsonData.map((event) => Event.fromJson(event)).toList();
     } else {
       throw Exception('Error al cargar eventos del staff');
+    }
+  }
+
+  // ========== ADMIN ==========
+  // Admin - Obtener todos los usuarios
+  Future<List<User>> getAllUsers() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/users/all'),
+    );
+
+    if (response.statusCode == 200) {
+      List jsonData = json.decode(response.body);
+      return jsonData.map((user) => User.fromJson(user)).toList();
+    } else {
+      throw Exception('Error al cargar usuarios');
+    }
+  }
+
+  // Admin - Cambiar rol de usuario
+  Future<User> updateUserRole(int userId, String role) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/users/$userId/role?role=$role'),
+    );
+
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Error al actualizar rol');
+    }
+  }
+
+  // Admin - Eliminar usuario
+  Future<void> deleteUser(int userId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/users/$userId'),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al eliminar usuario');
     }
   }
 }
