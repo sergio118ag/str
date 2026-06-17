@@ -4,6 +4,7 @@ import '../services/session_service.dart';
 import 'role_selection_screen.dart';
 import 'event_management_screen.dart';
 import 'admin_users_screen.dart';
+import 'admin_rewards_screen.dart';
 
 class AdminScreen extends StatefulWidget {
   final User user;
@@ -97,9 +98,10 @@ class _AdminScreenState extends State<AdminScreen> {
               subtitle: "Crear y gestionar recompensas",
               color: Colors.green,
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Función en desarrollo"),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AdminRewardsScreen(),
                   ),
                 );
               },

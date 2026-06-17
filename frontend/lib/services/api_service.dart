@@ -663,7 +663,6 @@ class ApiService {
     }
   }
 
-  // ========== ADMIN ==========
   // Admin - Obtener todos los usuarios
   Future<List<User>> getAllUsers() async {
     final response = await http.get(
@@ -699,6 +698,60 @@ class ApiService {
 
     if (response.statusCode != 200) {
       throw Exception('Error al eliminar usuario');
+    }
+    }
+
+    // Admin - Crear recompensa
+  Future<Reward> createReward(Map<String, dynamic> rewardData) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/rewards'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(rewardData),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Reward.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Error al crear recompensa');
+    }
+  }
+  // Admin - Obtener todas las recompensas (incluye inactivas)
+  Future<List<Reward>> getAllRewardsAdmin() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/rewards/all'),
+    );
+
+    if (response.statusCode == 200) {
+      List jsonData = json.decode(response.body);
+      return jsonData.map((reward) => Reward.fromJson(reward)).toList();
+    } else {
+      throw Exception('Error al cargar recompensas');
+    }
+  }
+
+  // Admin - Actualizar recompensa
+  Future<Reward> updateRewardAdmin(int rewardId, Map<String, dynamic> rewardData) async {
+    final response = await http.put(
+      Uri.parse('$baseUrl/rewards/$rewardId'),
+      headers: {"Content-Type": "application/json"},
+      body: jsonEncode(rewardData),
+    );
+
+    if (response.statusCode == 200) {
+      return Reward.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Error al actualizar recompensa');
+    }
+  }
+
+  // Admin - Eliminar recompensa (borrado lógico)
+  Future<void> deleteRewardAdmin(int rewardId) async {
+    final response = await http.delete(
+      Uri.parse('$baseUrl/rewards/$rewardId'),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Error al eliminar recompensa');
     }
   }
 }

@@ -86,7 +86,7 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     final qrCode = _qrController.text.trim();
     if (qrCode.isEmpty) {
       setState(() {
-        _result = "⚠️ Introduce un código QR";
+        _result = "Introduce un código QR";
       });
       return;
     }
@@ -99,14 +99,14 @@ class _QRScannerScreenState extends State<QRScannerScreen> {
     try {
       final purchase = await ApiService().validateQR(qrCode);
       setState(() {
-        _result = "✅ QR válido\n"
+        _result = "QR válido\n"
                   "Producto: ${purchase.productName}\n"
                   "Precio: ${purchase.price} €\n"
                   "Entrada validada correctamente";
       });
     } catch (e) {
       setState(() {
-        _result = "❌ ${e.toString()}";
+        _result = " ${e.toString()}";
       });
     } finally {
       setState(() {
