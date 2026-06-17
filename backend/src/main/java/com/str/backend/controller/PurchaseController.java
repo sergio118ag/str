@@ -84,12 +84,19 @@ public class PurchaseController {
             throw new RuntimeException("No quedan entradas disponibles");
         }
 
+        // 1. Reducir stock del ticket
         ticket.setAvailable(ticket.getAvailable() - 1);
         ticketRepository.save(ticket);
 
+        // 2. Actualizar el aforo del evento
+        Event event = ticket.getEvent();
+        event.setAvailable(event.getAvailable() - 1);
+        eventRepository.save(event);
+
+        // 3. Crear la compra
         Purchase purchase = new Purchase();
         purchase.setUser(user);
-        purchase.setEvent(ticket.getEvent());
+        purchase.setEvent(event);
         purchase.setTicket(ticket);
         purchase.setProductName(ticket.getName());
         purchase.setPrice(ticket.getPrice());

@@ -62,7 +62,7 @@ public class EventController {
 
     @GetMapping("/organizer/{organizerId}")
     public List<Event> getEventsByOrganizer(@PathVariable Long organizerId) {
-        return eventRepository.findByOrganizerId(organizerId);
+        return eventRepository.findByOrganizerIdAndActiveTrue(organizerId);
     }
 
     @GetMapping("/{id}/stats")

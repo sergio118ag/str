@@ -17,7 +17,17 @@ class _EventStatsScreenState extends State<EventStatsScreen> {
   @override
   void initState() {
     super.initState();
+    _loadStats();
+  }
+
+  void _loadStats() {
     stats = ApiService().getEventStats(widget.event.id);
+  }
+
+  Future<void> _refreshStats() async {
+    setState(() {
+      _loadStats();
+    });
   }
 
   @override
@@ -25,67 +35,87 @@ class _EventStatsScreenState extends State<EventStatsScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Estadísticas - ${widget.event.name}"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _refreshStats,
+          ),
+        ],
       ),
-      body: FutureBuilder<Map<String, dynamic>>(
-        future: stats,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error.toString()));
-          }
-          final data = snapshot.data!;
-          return Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                _buildStatCard(
-                  title: "Entradas vendidas",
-                  value: data['totalTicketsSold'].toString(),
-                  icon: Icons.confirmation_number,
-                  color: Colors.blue,
-                ),
-                const SizedBox(height: 20),
-                _buildStatCard(
-                  title: "Asistentes",
-                  value: data['totalAttendees'].toString(),
-                  icon: Icons.people,
-                  color: Colors.green,
-                ),
-                const SizedBox(height: 20),
-                _buildStatCard(
-                  title: "Ingresos totales",
-                  value: "${data['totalRevenue'].toStringAsFixed(2)} €",
-                  icon: Icons.euro,
-                  color: Colors.orange,
-                ),
-                const SizedBox(height: 20),
-                _buildStatCard(
-                  title: "Aforo disponible",
-                  value: "${data['available']}/${data['capacity']}",
-                  icon: Icons.event_seat,
-                  color: Colors.purple,
-                ),
-                const SizedBox(height: 30),
-                LinearProgressIndicator(
-                  value: data['totalTicketsSold'] / data['capacity'],
-                  backgroundColor: Colors.grey[300],
-                  color: Colors.green,
-                  minHeight: 20,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  "Ocupación: ${((data['totalTicketsSold'] / data['capacity']) * 100).toStringAsFixed(1)}%",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+      body: RefreshIndicator(
+        onRefresh: _refreshStats,
+        child: FutureBuilder<Map<String, dynamic>>(
+          future: stats,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text(snapshot.error.toString()));
+            }
+            final data = snapshot.data!;
+            double occupancy = data['capacity'] > 0 
+                ? (data['totalTicketsSold'] / data['capacity']) 
+                : 0;
+
+            return Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  _buildStatCard(
+                    title: "Entradas vendidas",
+                    value: data['totalTicketsSold'].toString(),
+                    icon: Icons.confirmation_number,
+                    color: Colors.blue,
                   ),
-                ),
-              ],
-            ),
-          );
-        },
+                  const SizedBox(height: 20),
+                  _buildStatCard(
+                    title: "Asistentes",
+                    value: data['totalAttendees'].toString(),
+                    icon: Icons.people,
+                    color: Colors.green,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildStatCard(
+                    title: "Ingresos totales",
+                    value: "${data['totalRevenue'].toStringAsFixed(2)} €",
+                    icon: Icons.euro,
+                    color: Colors.orange,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildStatCard(
+                    title: "Aforo máximo",
+                    value: data['capacity'].toString(),
+                    icon: Icons.event_seat,
+                    color: Colors.purple,
+                  ),
+                  const SizedBox(height: 20),
+                  _buildStatCard(
+                    title: "Entradas disponibles",
+                    value: data['available'].toString(),
+                    icon: Icons.confirmation_number,
+                    color: Colors.teal,
+                  ),
+                  const SizedBox(height: 30),
+                  LinearProgressIndicator(
+                    value: occupancy.clamp(0.0, 1.0),
+                    backgroundColor: Colors.grey[300],
+                    color: occupancy > 0.8 ? Colors.red : Colors.green,
+                    minHeight: 20,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    "Ocupación: ${(occupancy * 100).toStringAsFixed(1)}%",
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

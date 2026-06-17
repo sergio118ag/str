@@ -8,6 +8,7 @@ import 'event_detail_screen.dart';
 import 'event_stats_screen.dart';
 import 'event_attendees_screen.dart';
 import 'event_products_screen.dart';
+import 'event_add_ticket_screen.dart';
 import 'role_selection_screen.dart';
 import '../services/session_service.dart';
 
@@ -133,7 +134,19 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
                             const Icon(Icons.people, size: 14),
                             const SizedBox(width: 5),
                             Text(
-                              "Aforo: ${event.available}/${event.capacity}",
+                              "Aforo máximo: ${event.capacity}",
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.confirmation_number, size: 14),
+                            const SizedBox(width: 5),
+                            Text(
+                              "Entradas disponibles: ${event.available}",
                               style: TextStyle(
                                 color: event.available > 0 
                                     ? Colors.green 
@@ -148,6 +161,23 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        // Botón Añadir Entrada
+                        IconButton(
+                          icon: const Icon(Icons.confirmation_number, color: Colors.teal),
+                          onPressed: () async {
+                            final result = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EventAddTicketScreen(
+                                  event: event,
+                                ),
+                              ),
+                            );
+                            if (result == true) {
+                              loadEvents();
+                            }
+                          },
+                        ),
                         // Botón Estadísticas
                         IconButton(
                           icon: const Icon(Icons.analytics, color: Colors.green),

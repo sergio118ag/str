@@ -354,6 +354,26 @@ class ApiService {
     }
   }
 
+    // Crear ticket (entrada)
+  Future<Ticket> createTicket({
+    required int eventId,
+    required String name,
+    required double price,
+    required int available,
+  }) async {
+    final response = await http.post(
+      Uri.parse(
+        '$baseUrl/tickets?eventId=$eventId&name=$name&price=$price&available=$available'
+      ),
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return Ticket.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Error al crear entrada');
+    }
+  }
+
   Future<User> getUserById(int id) async {
 
     final response =

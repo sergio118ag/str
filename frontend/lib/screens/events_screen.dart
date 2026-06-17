@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../models/event.dart';
+import '../models/user.dart';
 import '../services/api_service.dart';
 import 'event_detail_screen.dart';
 
 class EventsScreen extends StatefulWidget {
-  const EventsScreen({super.key});
+  final User? user;
+  const EventsScreen({super.key, this.user});
 
   @override
   State<EventsScreen> createState() => _EventsScreenState();
@@ -169,17 +171,21 @@ class _EventsScreenState extends State<EventsScreen> {
                               width: double.infinity,
 
                               child: ElevatedButton(
-                                onPressed: event.available > 0
-                                    ? () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                EventDetailScreen(event: event),
-                                          ),
-                                        );
-                                      }
-                                    : null,
+                              onPressed: event.available > 0
+                                  ? () {
+                                      print("Usuario pasado a EventDetailScreen: ${widget.user?.name} - Rol: ${widget.user?.role}"); 
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              EventDetailScreen(
+                                                event: event,
+                                                user: widget.user,
+                                              ),
+                                        ),
+                                      );
+                                    }
+                                  : null,
 
                                 child: Text(
                                   event.available > 0 
