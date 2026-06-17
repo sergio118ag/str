@@ -754,4 +754,16 @@ class ApiService {
       throw Exception('Error al eliminar recompensa');
     }
   }
+  // Admin - Obtener estadísticas del dashboard
+  Future<Map<String, dynamic>> getDashboardStats() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/admin/stats/dashboard'),
+    );
+
+    if (response.statusCode == 200) {
+      return json.decode(response.body);
+    } else {
+      throw Exception('Error al cargar estadísticas');
+    }
+  }
 }

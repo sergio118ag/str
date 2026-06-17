@@ -5,6 +5,7 @@ import 'role_selection_screen.dart';
 import 'event_management_screen.dart';
 import 'admin_users_screen.dart';
 import 'admin_rewards_screen.dart';
+import 'admin_dashboard_screen.dart';
 
 class AdminScreen extends StatefulWidget {
   final User user;
@@ -60,6 +61,21 @@ class _AdminScreenState extends State<AdminScreen> {
               ),
             ),
             const SizedBox(height: 40),
+            _buildAdminButton(
+              icon: Icons.dashboard,
+              title: "Panel de Control",
+              subtitle: "Ver estadísticas globales de la plataforma",
+              color: Colors.purple,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AdminDashboardScreen(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 20),
             _buildAdminButton(
               icon: Icons.people,
               title: "Gestionar Usuarios",
