@@ -23,16 +23,22 @@ class EventManagementScreen extends StatefulWidget {
 
 class _EventManagementScreenState extends State<EventManagementScreen> {
   late Future<List<Event>> events;
+  bool _isAdmin = false;
 
   @override
   void initState() {
     super.initState();
+    _isAdmin = widget.user.role == 'admin';
     loadEvents();
   }
 
   Future<void> loadEvents() async {
     setState(() {
-      events = ApiService().getEventsByOrganizer(widget.user.id);
+      if (_isAdmin) {
+        events = ApiService().getAllEventsForAdmin();
+      } else {
+        events = ApiService().getEventsByOrganizer(widget.user.id);
+      }
     });
   }
 
@@ -40,7 +46,7 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Gestión de Eventos"),
+        title: Text(_isAdmin ? "Gestión de Eventos (Admin)" : "Gestión de Eventos"),
         centerTitle: true,
         actions: [
           IconButton(
@@ -77,7 +83,7 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
                   Icon(Icons.event_note, size: 80, color: Colors.grey),
                   SizedBox(height: 20),
                   Text(
-                    "No tienes eventos creados",
+                    "No hay eventos disponibles",
                     style: TextStyle(fontSize: 18),
                   ),
                   SizedBox(height: 10),
@@ -156,6 +162,17 @@ class _EventManagementScreenState extends State<EventManagementScreen> {
                             ),
                           ],
                         ),
+                        if (_isAdmin && event.organizer != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                              "Organizador: ${event.organizer?.name ?? 'Desconocido'}",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                     trailing: Row(

@@ -52,7 +52,7 @@ class RoleSelectionScreen extends StatelessWidget {
             _buildRoleButton(
               context: context,
               icon: Icons.event_note,
-              title: "Gestor de eventos",
+              title: "Organizador de eventos",
               subtitle: "Crear, editar y gestionar eventos",
               color: Colors.orange,
               onTap: () {

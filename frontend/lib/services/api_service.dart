@@ -825,4 +825,17 @@ class ApiService {
       throw Exception('Error al restar puntos');
     }
   }
+  // Admin - Obtener todos los eventos (para administradores)
+  Future<List<Event>> getAllEventsForAdmin() async {
+    final response = await http.get(
+      Uri.parse('$baseUrl/events/admin/all'),
+    );
+
+    if (response.statusCode == 200) {
+      List jsonData = json.decode(response.body);
+      return jsonData.map((event) => Event.fromJson(event)).toList();
+    } else {
+      throw Exception('Error al cargar todos los eventos');
+    }
+  }
 }

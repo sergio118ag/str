@@ -1,5 +1,6 @@
+import 'user.dart';
 class Event {
-  
+
   final int id;
   final String name;
   final String description;
@@ -12,6 +13,8 @@ class Event {
   final String category;
   final bool active;
   final int organizerId;
+  final User? organizer;
+  
 
   Event({
     required this.id,
@@ -26,6 +29,7 @@ class Event {
     required this.category,
     required this.active,
     required this.organizerId,
+    this.organizer, // ✅ AÑADIDO
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -42,6 +46,7 @@ class Event {
       category: json['category'] ?? '',
       active: json['active'] ?? true,
       organizerId: json['organizer']?['id'] ?? 0,
+      organizer: json['organizer'] != null ? User.fromJson(json['organizer']) : null, // ✅ AÑADIDO
     );
   }
 
@@ -71,6 +76,7 @@ class Event {
     String? category,
     bool? active,
     int? organizerId,
+    User? organizer,
   }) {
     return Event(
       id: id ?? this.id,
@@ -85,6 +91,7 @@ class Event {
       category: category ?? this.category,
       active: active ?? this.active,
       organizerId: organizerId ?? this.organizerId,
+      organizer: organizer ?? this.organizer,
     );
   }
 }

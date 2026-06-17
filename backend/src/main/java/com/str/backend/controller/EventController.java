@@ -128,4 +128,9 @@ public class EventController {
     public List<Event> getEventsByStaff(@PathVariable Long staffId) {
         return eventRepository.findByActiveTrue();
     }
+        // ADMIN - Obtener todos los eventos (incluye los de otros organizadores)
+    @GetMapping("/admin/all")
+    public List<Event> getAllEventsForAdmin() {
+        return eventRepository.findAll();
+    }
 }
