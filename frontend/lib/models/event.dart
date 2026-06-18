@@ -29,7 +29,7 @@ class Event {
     required this.category,
     required this.active,
     required this.organizerId,
-    this.organizer, // ✅ AÑADIDO
+    this.organizer, 
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -46,7 +46,7 @@ class Event {
       category: json['category'] ?? '',
       active: json['active'] ?? true,
       organizerId: json['organizer']?['id'] ?? 0,
-      organizer: json['organizer'] != null ? User.fromJson(json['organizer']) : null, // ✅ AÑADIDO
+      organizer: json['organizer'] != null ? User.fromJson(json['organizer']) : null, 
     );
   }
 
