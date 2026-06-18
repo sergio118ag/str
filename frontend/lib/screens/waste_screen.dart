@@ -239,7 +239,7 @@ class _WasteScreenState extends State<WasteScreen> {
         _userIdController.text = info['userId'].toString();
         _eventIdController.text = info['eventId'].toString();
         _scannedProduct = "${info['productName']} (${info['price']}€) - ${info['userName']}";
-        _result = "✅ Producto identificado: ${info['productName']}\n"
+        _result = " Producto identificado: ${info['productName']}\n"
                   "Usuario: ${info['userName']}\n"
                   "Evento: ${info['eventName']}";
       });
@@ -252,7 +252,7 @@ class _WasteScreenState extends State<WasteScreen> {
       );
     } catch (e) {
       setState(() {
-        _result = "❌ ${e.toString()}";
+        _result = " ${e.toString()}";
         _scannedProduct = '';
       });
     } finally {
@@ -292,7 +292,7 @@ class _WasteScreenState extends State<WasteScreen> {
 
       } catch (e) {
         setState(() {
-          _result = "❌ ${e.toString()}";
+          _result = " ${e.toString()}";
         });
       } finally {
         setState(() {

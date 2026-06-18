@@ -45,12 +45,12 @@ TRUNCATE TABLE users;
 
 INSERT INTO users (id, address, age, city, email, name, password, phone, points, postal_code, role) VALUES
 (1,'mostoles',20,'Mostoles','pedro@gmail.com','pedro','1234','637891928',0,'28916','asistente'),
-(2,'Calle Mayor 1',35,'Madrid','admin@gmail.com','Admin','1234','600000001',500,'28001','administrador'),
-(3,'Gran Via 10',32,'Madrid','admin2@gmail.com','Admin2','1234','600000002',250,'28013','administrador'),
+(2,'Calle Mayor 1',35,'Madrid','admin@gmail.com','Admin','1234','600000001',500,'28001','admin'),
+(3,'Gran Via 10',32,'Madrid','admin2@gmail.com','Admin2','1234','600000002',250,'28013','admin'),
 (4,'Calle Toledo 20',26,'Madrid','staff@gmail.com','Staff','1234','600000003',50,'28005','staff'),
 (5,'Calle Madrid 15',29,'Getafe','staff2@gmail.com','Staff2','1234','600000004',40,'28901','staff'),
-(6,'Calle Serrano 40',30,'Madrid','organizador@gmail.com','Organizador','1234','600000005',100,'28006','organizador'),
-(7,'Av. Europa 8',34,'Alcorcon','organizador2@gmail.com','Organizador2','1234','600000006',120,'28922','organizador'),
+(6,'Calle Serrano 40',30,'Madrid','organizador@gmail.com','Organizador','1234','600000005',100,'28006','event_manager'),
+(7,'Av. Europa 8',34,'Alcorcon','organizador2@gmail.com','Organizador2','1234','600000006',120,'28922','event_manager'),
 (8,'Calle Luna 5',22,'Madrid','ana@gmail.com','Ana','1234','600000007',75,'28004','asistente'),
 (9,'Calle Rio 12',24,'Mostoles','luis@gmail.com','Luis','1234','600000008',40,'28935','asistente'),
 (10,'Calle Sol 8',21,'Fuenlabrada','maria@gmail.com','Maria','1234','600000009',120,'28944','asistente'),

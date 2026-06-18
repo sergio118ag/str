@@ -204,7 +204,7 @@ class _IncidentScreenState extends State<IncidentScreen> {
         );
 
         setState(() {
-          _result = "✅ Incidencia registrada correctamente\n"
+          _result = "Incidencia registrada correctamente\n"
                     "ID: ${incident.id}\n"
                     "Título: ${incident.title}\n"
                     "Estado: ${incident.status}";
@@ -218,7 +218,7 @@ class _IncidentScreenState extends State<IncidentScreen> {
 
       } catch (e) {
         setState(() {
-          _result = "❌ ${e.toString()}";
+          _result = " ${e.toString()}";
         });
       } finally {
         setState(() {
